@@ -337,4 +337,32 @@ create table SeriesManagement (
         or publication_status != 'scheduled' and scheduled_publish_date is null)
 )
 
+-- CollaboratorFilm table
+create table CollaboratorFilm (
+    creator_id integer not null,
+    film_id integer not null,
+    role nvarchar(255) not null,
+    foreign key (creator_id) references Creator,
+    foreign key (film_id) references Film,
+    primary key (creator_id, film_id)
+)
 
+-- CollaboratorSeries table
+create table CollaboratorSeries (
+    creator_id integer not null,
+    series_id integer not null,
+    role nvarchar(255) not null,
+    foreign key (creator_id) references Creator,
+    foreign key (series_id) references Film,
+    primary key (creator_id, series_id)
+)
+
+-- CollaboratorEpisode table
+create table CollaboratorEpisode (
+    creator_id integer not null,
+    episode_id integer not null,
+    role nvarchar(255) not null,
+    foreign key (creator_id) references Creator,
+    foreign key (episode_id) references Film,
+    primary key (creator_id, episode_id)
+)
