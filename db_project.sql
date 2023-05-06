@@ -1,9 +1,8 @@
 -- Account table
 CREATE TABLE Account (
 	id integer identity(1, 1) not null,
-	username NVARCHAR UNIQUE not null,
-	email NVARCHAR UNIQUE not null,
-	account_type NVARCHAR CHECK (account_type IN('User', 'Creator')) not null,
+	username NVARCHAR(30) UNIQUE not null,
+	email NVARCHAR(30) UNIQUE not null,
 	password NVARCHAR(50) not null,
 	first_name NVARCHAR(20),
 	last_name NVARCHAR(30),
@@ -16,6 +15,7 @@ CREATE TABLE Account (
 -- Users table
 create table Users (
     account_id integer not null,
+    notifications_enabled bit default 'TRUE',
     foreign key (account_id) references Account,
     primary key (account_id)
 )
@@ -659,3 +659,179 @@ VALUES ('The Wedding Disaster', 'A series of hilarious mishaps unfold at a frien
 select Series.id, Series.title, S.number, S.title, E.number, E.title from Series
 join Season S on Series.id = S.series_id
 join Episode E on S.id = E.season_id
+
+-- insert films
+INSERT INTO Film (title, content_url, description, duration, thumbnail_url)
+VALUES
+    ('The Journey Home', 'https://contenturl.com/thejourneyhome', 'A heartwarming tale about a lost dog and his adventures trying to find his way back home', '01:45:00', 'https://thumbnailurl.com/thejourneyhome'),
+    ('The Last Chance', 'https://contenturl.com/thelastchance', 'A drama about a struggling musician who gets one last shot at making it big', '02:15:00', 'https://thumbnailurl.com/thelastchance'),
+    ('The Great Escape', 'https://contenturl.com/thegreatescape', 'A thriller about a group of prisoners who try to escape from a maximum security prison', '02:30:00', 'https://thumbnailurl.com/thegreatescape'),
+    ('The Secret Garden', 'https://contenturl.com/thesecretgarden', 'An enchanting story about a young girl who discovers a magical garden', '01:50:00', 'https://thumbnailurl.com/thesecretgarden'),
+    ('The Lost City', 'https://contenturl.com/thelostcity', 'An adventure film about a group of explorers who search for a lost city in the jungle', '02:20:00', 'https://thumbnailurl.com/thelostcity'),
+    ('The Perfect Match', 'https://contenturl.com/theperfectmatch', 'A romantic comedy about a couple who are perfect for each other, but can`t seem to get together', '01:55:00', 'https://thumbnailurl.com/theperfectmatch'),
+    ('The Art of Deception', 'https://contenturl.com/theartofdeception', 'A crime thriller about a master thief who pulls off a daring heist', '02:10:00', 'https://thumbnailurl.com/theartofdeception'),
+    ('The Price of Freedom', 'https://contenturl.com/thepriceoffreedom', 'A historical drama about the struggle for independence in a fictional country', '02:25:00', 'https://thumbnailurl.com/thepriceoffreedom'),
+    ('The Road Less Traveled', 'https://contenturl.com/theroadlesstraveled', 'A coming-of-age story about a young woman who goes on a road trip to find herself', '01:40:00', 'https://thumbnailurl.com/theroadlesstraveled'),
+    ('The Final Countdown', 'https://contenturl.com/thefinalcountdown', 'A science fiction film about a group of time travelers who go back in time to prevent a disaster', '02:05:00', 'https://thumbnailurl.com/thefinalcountdown'),
+    ('The Dark Forest', 'https://contenturl.com/thedarkforest', 'A horror movie about a group of friends who get lost in a mysterious forest', '01:55:00', 'https://thumbnailurl.com/thedarkforest'),
+    ('The Long Goodbye', 'https://contenturl.com/thelonggoodbye', 'A film noir about a private detective who gets involved in a complex case', '02:20:00', 'https://thumbnailurl.com/thelonggoodbye'),
+    ('The Secret Agent', 'https://contenturl.com/thesecretagent', 'An espionage thriller about a spy who tries to prevent a terrorist attack', '02:15:00', 'https://thumbnailurl.com/thesecretagent'),
+    ('The Other Side', 'https://contenturl.com/theotherside', 'A supernatural thriller about a couple who moves into a haunted house', '01:50:00', 'https://thumbnailurl.com/theotherside'),
+    ('The Last Stand', 'https://contenturl.com/thelaststand', 'An action-packed film about a sheriff who must protect his town from a dangerous gang', '02:00:00', 'https://thumbnailurl.com/thelaststand'),
+    ('The Great Unknown', 'https://contenturl.com/thegreatunknown', 'A mystery film about a woman who wakes up with no memory and must unravel the truth about her past', '02:10:00', 'https://thumbnailurl.com/thegreatunknown'),
+    ('The Final Showdown', 'https://contenturl.com/thefinalshowdown', 'A western about two rival cowboys who face off in a high-stakes duel', '01:45:00', 'https://thumbnailurl.com/thefinalshowdown'),
+    ('The Perfect Heist', 'https://contenturl.com/theperfectheist', 'A thriller about a group of thieves who plan the perfect robbery', '02:20:00', 'https://thumbnailurl.com/theperfectheist');
+
+select * from Film;
+
+-- inserting categories
+INSERT INTO Category (title)
+VALUES
+    ('Action'),
+    ('Adventure'),
+    ('Comedy'),
+    ('Drama'),
+    ('Fantasy'),
+    ('Horror'),
+    ('Mystery'),
+    ('Romance'),
+    ('Sci-Fi'),
+    ('Thriller'),
+    ('2D Animation'),
+    ('3D Animation'),
+    ('2D + 3D Animation'),
+    ('Blender Animation'),
+    ('Animation'),
+    ('Anime'),
+    ('Family'),
+    ('Superhero'),
+    ('Musical'),
+    ('Animated Series'),
+    ('Children'),
+    ('Classics'),
+    ('Coming of Age'),
+    ('Crime'),
+    ('Documentary'),
+    ('Epics'),
+    ('Family-Friendly'),
+    ('Historical'),
+    ('Holiday'),
+    ('Independent'),
+    ('Music'),
+    ('Period Pieces'),
+    ('Political'),
+    ('Sports');
+
+select * from Category;
+
+-- Connecting Content and Categories
+-- Insert sample data into SeriesCategory table
+INSERT INTO SeriesCategory (series_id, category_id)
+VALUES
+    (1, 7), -- Mystery Tales belongs to Mystery category
+    (2, 9), -- Sci-Fi Chronicles belongs to Sci-Fi category
+    (3, 2), -- Adventure Island belongs to Adventure category
+    (4, 4), -- Drama Diaries belongs to Drama category
+    (5, 3), -- Comedy Corner belongs to Comedy category
+    (1, 12), -- Mystery Tales belongs to Animation category
+    (2, 12), -- Sci-Fi Chronicles belongs to Animation category
+    (3, 12), -- Adventure Island belongs to Animation category
+    (4, 12), -- Drama Diaries belongs to Animation category
+    (5, 12); -- Comedy Corner belongs to Animation category
+
+-- Insert sample data into FilmCategory table
+INSERT INTO FilmCategory (film_id, category_id)
+VALUES
+    (1, 7), -- The Journey Home belongs to Mystery category
+    (2, 4), -- The Last Chance belongs to Drama category
+    (3, 1), -- The Great Escape belongs to Action category
+    (4, 5), -- The Secret Garden belongs to Fantasy category
+    (5, 2), -- The Lost City belongs to Adventure category
+    (6, 3), -- The Perfect Match belongs to Comedy category
+    (7, 11), -- The Art of Deception belongs to 2D Animation category
+    (8, 9), -- The Price of Freedom belongs to Sci-Fi category
+    (9, 12), -- The Road Less Traveled belongs to Animation category
+    (10, 9), -- The Final Countdown belongs to Sci-Fi category
+    (11, 6), -- The Dark Forest belongs to Horror category
+    (12, 4), -- The Long Goodbye belongs to Drama category
+    (13, 6), -- The Secret Agent belongs to Horror category
+    (14, 11), -- The Other Side belongs to 2D Animation category
+    (15, 1), -- The Last Stand belongs to Action category
+    (16, 7), -- The Great Unknown belongs to Mystery category
+    (17, 1), -- The Final Showdown belongs to Action category
+    (18, 10), -- The Perfect Heist belongs to Thriller category
+    (1, 18), -- The Journey Home belongs to Thriller category
+    (2, 15), -- The Last Chance belongs to Animated Series category
+    (3, 17), -- The Great Escape belongs to Superhero category
+    (4, 12), -- The Secret Garden belongs to Animation category
+    (5, 16), -- The Lost City belongs to Children category
+    (6, 13), -- The Perfect Match belongs to Family category
+    (7, 14), -- The Art of Deception belongs to Blender Animation category
+    (8, 18), -- The Price of Freedom belongs to Thriller category
+    (9, 13), -- The Road Less Traveled belongs to Family category
+    (10, 17), -- The Final Countdown belongs to Superhero category
+    (12, 14), -- The Long Goodbye belongs to 3D Animation category
+    (13, 17) -- The Secret Agent belongs to Superhero category
+
+select F.title, C.title from Film F
+join FilmCategory FC on F.id = FC.film_id
+join Category C on C.id = FC.category_id
+
+select S.title, C.title from Series S
+join SeriesCategory SC on S.id = SC.series_id
+join Category C on SC.category_id = C.id
+
+-- Insert 15 Users into Account table
+INSERT INTO Account (username, email, password, first_name, last_name, profile_image_url)
+VALUES
+    ('john_doe', 'john.doe@example.com', 'gizmo42Plat', 'John', 'Doe', 'https://example.com/profiles/john_doe.jpg'),
+    ('jane_doe', 'jane.doe@example.com', 'xYl0tik23s', 'Jane', 'Doe', 'https://example.com/profiles/jane_doe.jpg'),
+    ('michael_smith', 'michael.smith@example.com', 'Qr8abLem9F', 'Michael', 'Smith', 'https://example.com/profiles/michael_smith.jpg'),
+    ('emily_johnson', 'emily.johnson@example.com', '9oJ3xWq1Ht', 'Emily', 'Johnson', 'https://example.com/profiles/emily_johnson.jpg'),
+    ('chris_brown', 'chris.brown@example.com', 'iSw7mzRcP4', 'Chris', 'Brown', 'https://example.com/profiles/chris_brown.jpg'),
+    ('sarah_jackson', 'sarah.jackson@example.com', 'z6KJ2VgXap', 'Sarah', 'Jackson', 'https://example.com/profiles/sarah_jackson.jpg'),
+    ('kevin_williams', 'kevin.williams@example.com', 'B8dR5YfLq0', 'Kevin', 'Williams', 'https://example.com/profiles/kevin_williams.jpg'),
+    ('laura_davis', 'laura.davis@example.com', 'h3FtVl1GzS', 'Laura', 'Davis', 'https://example.com/profiles/laura_davis.jpg'),
+    ('ryan_jones', 'ryan.jones@example.com', 'U9y6EaWpDx', 'Ryan', 'Jones', 'https://example.com/profiles/ryan_jones.jpg'),
+    ('olivia_thompson', 'olivia.thompson@example.com', 'r4KjM5QbNc', 'Olivia', 'Thompson', 'https://example.com/profiles/olivia_thompson.jpg'),
+    ('matt_taylor', 'matt.taylor@example.com', 'C8L0G1SvXy', 'Matt', 'Taylor', 'https://example.com/profiles/matt_taylor.jpg'),
+    ('emma_anderson', 'emma.anderson@example.com', '6oFZwYh7Jk', 'Emma', 'Anderson', 'https://example.com/profiles/emma_anderson.jpg'),
+    ('joshua_martin', 'joshua.martin@example.com', 'R2I5Bn1Qx9', 'Joshua', 'Martin', 'https://example.com/profiles/joshua_martin.jpg'),
+    ('sophia_white', 'sophia.white@example.com', 'T8mE3V6UaP', 'Sophia', 'White', 'https://example.com/profiles/sophia_white.jpg'),
+    ('brandon_garcia', 'brandon.garcia@example.com', '7oD5Wq8LbM', 'Brandon', 'Garcia', 'https://example.com/profiles/brandon_garcia.jpg'),
+    ('kate_miller', 'kate.miller@example.com', '3jKs7fTq9m', 'Kate', 'Miller', 'https://example.com/profiles/kate_miller.jpg'),
+    ('alex_moore', 'alex.moore@example.com', 'a5H8wS6cL1', 'Alex', 'Moore', 'https://example.com/profiles/alex_moore.jpg'),
+    ('grace_lee', 'grace.lee@example.com', '2oY9uX7rA0', 'Grace', 'Lee', 'https://example.com/profiles/grace_lee.jpg'),
+    ('ethan_clark', 'ethan.clark@example.com', 'e1T6zU3pD8', 'Ethan', 'Clark', 'https://example.com/profiles/ethan_clark.jpg'),
+    ('lily_lewis', 'lily.lewis@example.com', 'i4G2mQ9vX6', 'Lily', 'Lewis', 'https://example.com/profiles/lily_lewis.jpg'),
+    ('jack_young', 'jack.young@example.com', 'j5K0fS7bN3', 'Jack', 'Young', 'https://example.com/profiles/jack_young.jpg'),
+    ('chloe_hall', 'chloe.hall@example.com', 'c8L1gA5wY2', 'Chloe', 'Hall', 'https://example.com/profiles/chloe_hall.jpg'),
+    ('noah_patel', 'noah.patel@example.com', 'n9R6tV3uZ0', 'Noah', 'Patel', 'https://example.com/profiles/noah_patel.jpg'),
+    ('isabella_green', 'isabella.green@example.com', 'i7E2hQ1sD4', 'Isabella', 'Green', 'https://example.com/profiles/isabella_green.jpg'),
+    ('liam_turner', 'liam.turner@example.com', 'l8F1jK5rA9', 'Liam', 'Turner', 'https://example.com/profiles/liam_turner.jpg'),
+    ('oliver_carter', 'oliver.carter@example.com', 'o3G6bM9yZ7', 'Oliver', 'Carter', 'https://example.com/profiles/oliver_carter.jpg'),
+    ('amelia_parker', 'amelia.parker@example.com', 'a4H5wS1xU6', 'Amelia', 'Parker', 'https://example.com/profiles/amelia_parker.jpg'),
+    ('william_wright', 'william.wright@example.com', 'w9I0tY3pV8', 'William', 'Wright', 'https://example.com/profiles/william_wright.jpg'),
+    ('mia_thomas', 'mia.thomas@example.com', 'm2J7zK1rB6', 'Mia', 'Thomas', 'https://example.com/profiles/mia_thomas.jpg'),
+    ('jacob_adams', 'jacob.adams@example.com', 'j3K6fA9yX5', 'Jacob', 'Adams', 'https://example.com/profiles/jacob_adams.jpg');
+
+select * from Account;
+
+insert into Users (account_id)
+values
+    (3),
+    (4),
+    (5),
+    (6),
+    (7),
+    (8),
+    (9),
+    (10),
+    (11),
+    (12),
+    (13),
+    (14),
+    (15),
+    (16),
+    (17)
+
