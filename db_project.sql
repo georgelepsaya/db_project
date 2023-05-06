@@ -1044,4 +1044,72 @@ values
 
 select * from Community;
 
+insert into CommunityContributor (community_id, creator_id)
+values
+    (1, 18), (1, 19),
+    (2, 19), (2, 20), (2, 21),
+    (3, 20), (3, 22), (3, 23),
+    (4, 21), (4, 24), (4, 25),
+    (5, 22), (5, 26), (5, 27),
+    (6, 23), (6, 28), (6, 29),
+    (7, 24), (7, 30), (7, 31),
+    (8, 25), (8, 32), (8, 18),
+    (9, 26), (9, 19), (9, 20),
+    (10, 27), (10, 21), (10, 22),
+    (11, 28), (11, 23), (11, 24),
+    (12, 29), (12, 25), (12, 26),
+    (13, 30), (13, 27), (13, 28),
+    (14, 29), (14, 30), (14, 31),
+    (15, 31), (15, 32)
+
+INSERT INTO CommunityPost (community_id, creator_id, title, content)
+VALUES
+    (1, 18, 'My Latest Indie Animation Project', 'Hey everyone, I just finished my latest indie animation project and wanted to share it with you all. Let me know what you think!'),
+    (1, 18, 'Storyboarding Tips for Independent Filmmakers', 'Creating a clear and concise storyboard is crucial for any animated project. In this post, I will share some tips that can help independent filmmakers create better storyboards.'),
+    (1, 19, 'Animation Styles for Indie Filmmakers', 'As an indie filmmaker, you have a lot of creative freedom when it comes to animation styles. In this post, I will discuss various animation styles and techniques you can explore.'),
+    (2, 19, 'Stop Motion Tips for Beginners', 'I have been working on stop motion animation for a few years now and thought it would be helpful to share some tips for those just starting out.'),
+    (2, 20, 'Sound Design in Animation: Tips and Techniques', 'Sound design can greatly enhance the overall experience of an animated project. In this post, I will share some tips and techniques for improving sound design in your animation.'),
+    (2, 21, 'Creating a Soundtrack for Your Animation', 'A memorable soundtrack can make your animation stand out. In this post, I will discuss how to create a captivating and fitting soundtrack for your animated project.'),
+    (3, 20, 'Animating a Walk Cycle in 2D', 'In this post, I will share my process for animating a walk cycle in 2D, including the key poses and timing.'),
+    (3, 22, 'Marketing Your Independent Animation', 'Marketing is essential for getting your animation noticed. In this post, I will share some strategies for marketing your independent animation effectively.'),
+    (3, 23, 'Crowdfunding Your Animation Project', 'Crowdfunding can be a great way to fund your animation project. In this post, I will share some tips for running a successful crowdfunding campaign for your animated film.'),
+    (4, 21, 'Favorite 3D Animation Software', 'What is your favorite 3D animation software and why? I have been using Blender for a while now, but I am curious to hear about other options.'),
+    (4, 24, 'Creating Memorable Characters in Animation', 'In this post, I will share some tips for creating memorable and engaging characters for your animation.'),
+    (4, 25, 'Exploring Different Character Design Styles', 'In this post, I will discuss different character design styles and how they can impact the overall look and feel of your animation.'),
+    (5, 22, 'Sound Design for Animated Films', 'Sound design is an often overlooked aspect of animated films. In this post, I will discuss some techniques and considerations for creating immersive soundscapes.'),
+    (5, 26, 'Working with Voice Actors for Your Animation', 'In this post, I will discuss how to find and work with voice actors to bring your animated characters to life.'),
+    (5, 27, 'The Importance of Voice Direction in Animation', 'Proper voice direction can make a huge difference in the quality of your animation. In this post, I will discuss the importance of voice direction and share some tips for directing voice actors effectively.'),
+    (6, 23, 'The Importance of Story in Animated Shorts', 'Storytelling is a crucial element in animated short films. In this post, I will discuss some tips for creating compelling narratives in your animations.'),
+    (6, 28, 'Creating a Strong Story for Your Animation', 'A strong story is the backbone of any animation. In this post, I will share some tips for developing a compelling and engaging story for your animated project.'),
+    (6, 29, 'The Role of Scriptwriting in Animation', 'Scriptwriting plays a crucial role in the development of an animated project. In this post, I will discuss the importance of scriptwriting in animation and share some tips for writing a great script.'),
+    (7, 24, 'Character Design Tips for Animators', 'Character design is an important part of the animation process. In this post, I will share some tips and tricks for creating memorable characters.'),
+    (7, 30, 'The Benefits of Collaboration in Animation', 'Collaboration can lead to amazing results in animation. In this post, I will discuss the benefits of collaborating with others in the animation industry and share some tips for successful collaborations.'),
+    (7, 31, 'Building an Animation Team for Your Project', 'In this post, I will discuss how to build an effective animation team for your project and share some tips for assembling the right group of collaborators.'),
+    (8, 25, 'Writing a Script for an Animated Series', 'Writing a script for an animated series can be challenging. In this post, I will share some advice on how to create engaging stories and dialogue.'),
+    (8, 32, 'Best Practices for Animation Project Management', 'Managing an animation project can be challenging. In this post, I will share some best practices for managing animation projects effectively and efficiently.'),
+    (8, 18, 'Tools and Techniques for Animation Project Management', 'In this post, I will discuss various tools and techniques that can help you manage your animation project more effectively.'),
+    (9, 26, 'Challenges of Directing an Animated Film', 'Directing an animated film is a unique and complex process. In this post, I will discuss some of the challenges I have faced and how I overcame them.'),
+    (9, 19, 'Using Color Theory in Animation', 'In this post, I will discuss how to apply color theory in animation to create visually striking and emotionally engaging projects.'),
+    (9, 20, 'The Role of Lighting in Animation', 'Lighting plays an essential role in animation. In this post, I will discuss the importance of lighting and share some tips for creating effective lighting in your animated project.'),
+    (10, 27, 'Visual Effects Techniques in Animation', 'In this post, I will explore some visual effects techniques that can be used in animation to create stunning and dynamic visuals.'),
+    (10, 21, 'Integrating 3D Elements in 2D Animation', 'In this post, I will share some tips and techniques for seamlessly integrating 3D elements into a predominantly 2D animated project.'),
+    (10, 22, 'Exploring Mixed Media Animation', 'Mixed media animation can produce visually stunning results. In this post, I will discuss various mixed media techniques that you can incorporate into your animation projects.'),
+    (11, 28, 'Exploring Experimental Animation Techniques', 'Experimental animation offers a world of creative possibilities. In this post, I will discuss some innovative techniques I have been experimenting with.'),
+    (11, 23, 'Creating Realistic Fluid Simulations in Animation', 'Fluid simulations can add a layer of realism to your animated projects. In this post, I will share some tips for creating realistic fluid simulations in animation.'),
+    (11, 24, 'Animating Cloth and Hair: Tips and Techniques', 'In this post, I will discuss some tips and techniques for animating cloth and hair in your animated projects to achieve more realistic results.'),
+    (12, 29, 'Finding Funding for Your Indie Animation', 'Funding can be a major obstacle for indie animators. In this post, I will share some resources and tips for securing funding for your animation projects.'),
+    (12, 25, 'The Art of Background Design in Animation', 'Background design is an essential aspect of animation. In this post, I will share some tips and techniques for creating visually stunning and engaging background designs for your animated projects.'),
+    (12, 26, 'Creating Atmospheric Effects in Animation', 'Atmospheric effects can enhance the overall look and feel of your animation. In this post, I will discuss various techniques for creating atmospheric effects in your animated projects.'),
+    (13, 30, 'Upcoming Animation Festivals and Events', 'In this post, I will share information about some upcoming animation festivals and events that you might be interested in attending or submitting your work to.'),
+    (13, 27, 'The Importance of Pacing in Animation', 'Pacing plays a crucial role in storytelling and viewer engagement. In this post, I will discuss the importance of pacing in animation and share some tips for maintaining proper pacing throughout your project.'),
+    (13, 28, 'Using Rhythm and Timing in Animation', 'Rhythm and timing can significantly impact the effectiveness of your animation. In this post, I will share some tips and techniques for incorporating rhythm and timing into your animated projects.'),
+    (14, 29, 'The Art of Lip Syncing in Animation', 'Lip syncing is an essential skill for animators. In this post, I will share some tips and techniques for creating convincing lip-sync animations for your characters.'),
+    (14, 30, 'Animating Facial Expressions: Tips and Techniques', 'In this post, I will discuss some tips and techniques for animating facial expressions in your animated projects, enhancing the emotional depth of your characters.'),
+    (14, 31, 'Best Animation Schools and Programs', 'Choosing the right animation school or program can be difficult. In this post, I will share my thoughts on some of the best options available.'),
+    (15, 32, 'Free and Affordable Animation Software', 'Animation software can be expensive, but there are some free and affordable options out there. In this post, I will discuss some of the best options for animators on a budget.'),
+    (15, 31, 'The Benefits of Pre-Visualization in Animation', 'Pre-visualization can save you time and resources in the long run. In this post, I will discuss the benefits of pre-visualization in animation and share some tips for implementing it effectively.'),
+    (15, 32, 'Using Animatics to Plan Your Animation Project', 'Animatics are an invaluable tool for planning your animation project. In this post, I will discuss the role of animatics in animation and share some tips for creating effective animatics.');
+
+select * from CommunityPost;
+
 
