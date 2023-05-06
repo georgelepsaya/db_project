@@ -314,13 +314,25 @@ create table FilmManagement (
 )
 
 -- EpisodeManagement table
-create table FilmManagement (
-    film_id integer not null,
+create table EpisodeManagement (
+    episode_id integer not null,
     visibility varchar(20) check (visibility in ('public', 'private')),
     publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
     scheduled_publish_date datetime,
-    foreign key (film_id) references Film,
-    primary key (film_id),
+    foreign key (episode_id) references Film,
+    primary key (episode_id),
+    check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
+        or publication_status != 'scheduled' and scheduled_publish_date is null)
+)
+
+-- SeriesManagement table
+create table SeriesManagement (
+    series_id integer not null,
+    visibility varchar(20) check (visibility in ('public', 'private')),
+    publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
+    scheduled_publish_date datetime,
+    foreign key (series_id) references Film,
+    primary key (series_id),
     check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
         or publication_status != 'scheduled' and scheduled_publish_date is null)
 )
