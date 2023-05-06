@@ -24,10 +24,103 @@ create table Users (
 create table Creator (
 	account_id integer not null,
 	status nvarchar(30),
-	bio ntext,
+	bio nvarchar(max),
 	website varchar(2083),
 	foreign key (account_id) references Account,
 	primary key (account_id)
+)
+
+-- PaymentType table
+create table PaymentType (
+	id varchar(2) not null,
+	name nvarchar(16) unique not null,
+	primary key (id)
+)
+
+-- Codifier tables
+
+-- insert payment types
+insert into PaymentType values
+('AE','American_Express'),
+('VI','Visa'),
+('MA','Mastercard'),
+('DI','Discover'),
+('JC','JCB'),
+('DC','Diners_Club'),
+('UN','UnionPay'),
+('PA','PayPal'),
+('AP','Apple_Pay'),
+('GO','Google_Pay'),
+('AL','AliPay'),
+('WC','WeChat_Pay')
+
+-- TransactionStatus table
+create table Transaction_status (
+	id varchar(2) not null,
+	name nvarchar(9) unique not null,
+	primary key (id)
+)
+
+-- insert transaction status values
+insert into Transaction_status values
+('PE','pending'),
+('CO','completed'),
+('FA','failed'),
+('RE','refunded')
+
+-- Currency table
+create table Currency (
+	ISO_code varchar(3) primary key not null,
+	details nvarchar(20) unique not null
+)
+
+-- insert currency values
+insert into Currency values
+('USD','United States dollar'),
+('EUR','Euro dollar'),
+('JPY','Japanese yen'),
+('GBP','Pound sterling'),
+('AUD','Australian dollar'),
+('CAD','Canadian dollar'),
+('CHF','Switzerland franc'),
+('CNY','Chinese yuan'),
+('HKD','Hong Kong dollar'),
+('NZD','New Zealand dollar'),
+('SGD','Singapore dollar'),
+('SEK','Swedish krona'),
+('KRW','South Korean won'),
+('MXN','Mexican peso'),
+('INR','Indian rupee'),
+('RUB','Russian ruble'),
+('ZAR','South African rand'),
+('TRY','Turkish lira'),
+('BRL','Brazilian real')
+
+-- Address table
+create table Address (
+    id integer identity (1, 1) not null,
+    country nvarchar(255) not null,
+    city nvarchar(255) not null,
+    state nvarchar(50) not null,
+    postal_code varchar(10) not null,
+    primary key (id)
+)
+
+-- Billing table
+create table Billing (
+    id integer identity (1, 1) not null,
+    user_id integer not null,
+    payment_type varchar(2),
+    foreign key (user_id) references Users,
+    foreign key (payment_type) references PaymentType,
+    primary key (id)
+)
+
+-- AccountLocation table
+create table AccountLocation (
+    account_id integer not null,
+
+    foreign key (account_id) references Account
 )
 
 -- Film table
@@ -35,7 +128,7 @@ create table Film (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
     content_url varchar(255) not null,
-    description ntext not null,
+    description nvarchar(max) not null,
     duration time not null,
     thumbnail_url varchar(255),
     created_at datetime not null default getdate(),
@@ -46,21 +139,23 @@ create table Film (
 create table Episode (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
-    description ntext not null,
+    description nvarchar(max) not null,
     content_url varchar(255) not null,
     number integer not null,
     duration time not null,
     thumbnail_url varchar(255),
-    created_at datetime not null default getdate()
+    created_at datetime not null default getdate(),
+    primary key (id)
 )
 
 -- Series table
 create table Series (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
-    description ntext not null,
+    description nvarchar(max) not null,
     thumbnail_url varchar(255),
-    created_at datetime not null default getdate()
+    created_at datetime not null default getdate(),
+    primary key (id)
 )
 
 -- Season table
@@ -162,7 +257,7 @@ create table FilmCategory (
 create table Community (
     id integer identity (1, 1) not null,
     name nvarchar(255) not null,
-    description ntext,
+    description nvarchar(max),
     image_url varchar(255),
     created_at datetime not null default getdate(),
     primary key (id)
@@ -203,10 +298,10 @@ create table CommunityPost (
     community_id integer not null,
     creator_id integer not null,
     title nvarchar(255) not null,
-    content ntext not null,
+    content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     primary key (id),
-    foreign key (creator_id, community_id) references CommunityContributor (creator_id, community_id)
+    foreign key (community_id, creator_id) references CommunityContributor (community_id, creator_id)
 )
 
 -- CommunityPostLike table
@@ -222,7 +317,7 @@ create table CommunityPostLike (
 create table ReviewFilm (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
-    content ntext not null,
+    content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     rating decimal(4, 2),
     film_id integer not null,
@@ -236,7 +331,7 @@ create table ReviewFilm (
 create table ReviewSeries (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
-    content ntext not null,
+    content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     rating decimal(4, 2),
     series_id integer not null,
@@ -250,7 +345,7 @@ create table ReviewSeries (
 create table ReviewEpisode (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
-    content ntext not null,
+    content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     rating decimal(4, 2),
     episode_id integer not null,
@@ -285,7 +380,7 @@ create table CreatorPost (
     id integer identity (1, 1) not null,
     creator_id integer not null,
     title nvarchar(255) not null,
-    content ntext not null,
+    content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     update_at datetime,
     foreign key (creator_id) references Creator,
