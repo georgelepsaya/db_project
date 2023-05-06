@@ -319,7 +319,7 @@ create table EpisodeManagement (
     visibility varchar(20) check (visibility in ('public', 'private')),
     publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
     scheduled_publish_date datetime,
-    foreign key (episode_id) references Film,
+    foreign key (episode_id) references Episode,
     primary key (episode_id),
     check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
         or publication_status != 'scheduled' and scheduled_publish_date is null)
@@ -331,7 +331,7 @@ create table SeriesManagement (
     visibility varchar(20) check (visibility in ('public', 'private')),
     publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
     scheduled_publish_date datetime,
-    foreign key (series_id) references Film,
+    foreign key (series_id) references Series,
     primary key (series_id),
     check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
         or publication_status != 'scheduled' and scheduled_publish_date is null)
@@ -353,7 +353,7 @@ create table CollaboratorSeries (
     series_id integer not null,
     role nvarchar(255) not null,
     foreign key (creator_id) references Creator,
-    foreign key (series_id) references Film,
+    foreign key (series_id) references Series,
     primary key (creator_id, series_id)
 )
 
@@ -363,6 +363,8 @@ create table CollaboratorEpisode (
     episode_id integer not null,
     role nvarchar(255) not null,
     foreign key (creator_id) references Creator,
-    foreign key (episode_id) references Film,
+    foreign key (episode_id) references Episode,
     primary key (creator_id, episode_id)
 )
+
+
