@@ -136,7 +136,7 @@ create table WatchesSeries (
 -- Category table
 create table Category (
     id integer identity (1, 1) not null,
-    title nvarchar(255) not null,
+    title nvarchar(255) not null unique ,
     primary key (id)
 )
 
@@ -367,4 +367,11 @@ create table CollaboratorEpisode (
     primary key (creator_id, episode_id)
 )
 
-
+-- UserCategory table
+create table UserCategory (
+    user_id integer not null,
+    category_id integer not null,
+    foreign key (user_id) references Users,
+    foreign key (category_id) references Category,
+    primary key (user_id, category_id)
+)
