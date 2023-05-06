@@ -853,3 +853,36 @@ values
     (31, 'CGI Artist', 'Creating visually striking 3D animations and digital environments for films.', 'https://www.example.com/creators/cgiartist1'),
     (32, 'Animator', 'Versatile animator skilled in both 2D and 3D animation with a strong focus on storytelling.', 'https://www.example.com/creators/animator5');
 
+insert into CollaboratorFilm (creator_id, film_id, role)
+values
+    (18, 1, 'Director'),
+    (19, 1, 'Producer'),
+    (20, 2, 'Director'),
+    (21, 3, 'Director'),
+    (22, 3, 'Writer'),
+    (23, 4, 'Director'),
+    (24, 4, 'Producer'),
+    (25, 5, 'Director'),
+    (26, 6, 'Director'),
+    (27, 6, 'Writer'),
+    (28, 7, 'Director'),
+    (29, 8, 'Director'),
+    (30, 8, 'Producer'),
+    (31, 9, 'Director'),
+    (32, 9, 'Writer'),
+    (18, 10, 'Director'),
+    (19, 11, 'Director'),
+    (20, 11, 'Producer'),
+    (21, 12, 'Director'),
+    (22, 13, 'Director'),
+    (23, 13, 'Writer'),
+    (24, 14, 'Director'),
+    (25, 15, 'Director'),
+    (26, 15, 'Producer'),
+    (27, 16, 'Director'),
+    (28, 17, 'Director'),
+    (29, 17, 'Writer'),
+    (30, 18, 'Director')
+
+select * from CollaboratorFilm
+
