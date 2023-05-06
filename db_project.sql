@@ -168,7 +168,7 @@ create table Community (
     primary key (id)
 )
 
--- CommunityContributors
+-- CommunityContributor table
 create table CommunityContributor (
     community_id integer not null,
     creator_id integer not null,
@@ -178,7 +178,7 @@ create table CommunityContributor (
     primary key (community_id, creator_id)
 )
 
--- CommunityMembers
+-- CommunityMembers table
 create table CommunityMember (
     creator_id integer not null,
     community_id integer not null,
@@ -196,3 +196,100 @@ create table CreatorLink (
     foreign key (creator_id) references Creator,
     primary key (creator_id, sm_type)
 )
+
+-- CommunityPost table
+create table CommunityPost (
+    id integer identity (1, 1) not null,
+    community_id integer not null,
+    creator_id integer not null,
+    title nvarchar(255) not null,
+    content ntext not null,
+    created_at datetime not null default getdate(),
+    primary key (id),
+    foreign key (creator_id, community_id) references CommunityContributor (creator_id, community_id)
+)
+
+-- CommunityPostLike table
+create table CommunityPostLike (
+    creator_id integer not null,
+    community_post_id integer not null,
+    foreign key (creator_id) references Creator,
+    foreign key (community_post_id) references CommunityPost,
+    primary key (creator_id, community_post_id)
+)
+
+-- ReviewFilm table
+create table ReviewFilm (
+    id integer identity (1, 1) not null,
+    title nvarchar(255) not null,
+    content ntext not null,
+    created_at datetime not null default getdate(),
+    rating decimal(4, 2),
+    film_id integer not null,
+    user_id integer not null,
+    foreign key (film_id) references Film,
+    foreign key (user_id) references Users,
+    primary key (id)
+)
+
+-- ReviewSeries table
+create table ReviewSeries (
+    id integer identity (1, 1) not null,
+    title nvarchar(255) not null,
+    content ntext not null,
+    created_at datetime not null default getdate(),
+    rating decimal(4, 2),
+    series_id integer not null,
+    user_id integer not null,
+    foreign key (series_id) references Series,
+    foreign key (user_id) references Users,
+    primary key (id)
+)
+
+-- ReviewEpisode table
+create table ReviewEpisode (
+    id integer identity (1, 1) not null,
+    title nvarchar(255) not null,
+    content ntext not null,
+    created_at datetime not null default getdate(),
+    rating decimal(4, 2),
+    episode_id integer not null,
+    user_id integer not null,
+    foreign key (episode_id) references Episode,
+    foreign key (user_id) references Users,
+    primary key (id)
+)
+
+-- Follows table
+create table Follows (
+    user_id integer not null,
+    creator_id integer not null,
+    foreign key (user_id) references Users,
+    foreign key (creator_id) references Creator,
+    primary key (user_id, creator_id)
+)
+
+-- CreatorsFollow table
+create table CreatorsFollow (
+    creator_followed integer not null,
+    creator_follower integer not null,
+    started_at datetime not null default getdate(),
+    foreign key (creator_followed) references Creator,
+    foreign key (creator_follower) references Creator,
+    primary key (creator_followed, creator_follower),
+    check (creator_followed != creator_follower)
+)
+
+-- CreatorPost table
+create table CreatorPost (
+    id integer identity (1, 1) not null,
+    creator_id integer not null,
+    title nvarchar(255) not null,
+    content ntext not null,
+    created_at datetime not null default getdate(),
+    update_at datetime,
+    foreign key (creator_id) references Creator,
+    primary key (id),
+)
+
+
