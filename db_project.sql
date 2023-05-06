@@ -109,9 +109,11 @@ create table Address (
 -- Billing table
 create table Billing (
     id integer identity (1, 1) not null,
-    user_id integer not null,
-    payment_type varchar(2),
-    foreign key (user_id) references Users,
+    account_id integer not null,
+    payment_type varchar(2) not null,
+    card_last_digits varchar(4) not null,
+    expiration date not null,
+    foreign key (account_id) references Account,
     foreign key (payment_type) references PaymentType,
     primary key (id)
 )
@@ -119,8 +121,74 @@ create table Billing (
 -- AccountLocation table
 create table AccountLocation (
     account_id integer not null,
+    address_id integer not null,
+    foreign key (account_id) references Account,
+    foreign key (address_id) references Address,
+    primary key (account_id, address_id)
+)
 
-    foreign key (account_id) references Account
+-- Transactions table
+create table Transactions (
+  id integer identity(1, 1) not null,
+  user_id integer not null,
+  amount decimal(6,2) not null,
+  currency varchar(3) not null,
+  status varchar(2) not null,
+  created_at datetime not null default getdate(),
+  foreign key (user_id) references Users,
+  foreign key (currency) references Currency(ISO_code),
+  foreign key (status) references Transaction_status(id),
+  primary key (id)
+  -- billing can be found through users
+  -- payment type can be found through billing
+)
+
+-- TransactionCreators table (transaction from a user to a creator)
+create table Transactions_Creators (
+	id integer identity(1, 1) not null,
+	transaction_id integer unique not null,
+	creator_id integer not null,
+	foreign key (transaction_id) references Transactions(id),
+	foreign key (creator_id) references Creator,
+	primary key (id)
+)
+
+-- Subscription table
+create table Subscription (
+	id integer primary key identity(1, 1) not null,
+	user_id integer unique not null,
+	last_subscription datetime not null default getdate(),
+	transaction_id integer unique not null,
+	-- if there is no transaction, then this record won't exist
+	-- however if user made a transaction in the past it'll be there, hence null for transaction_id
+	is_active bit not null,
+	auto_renewal bit not null,
+	foreign key (user_id) references Users,
+	foreign key (transaction_id) references Transactions,
+	primary key (id)
+)
+
+-- Fundraising table
+create table Fundraising (
+  id integer identity(1, 1) not null,
+  creator_id integer not null,
+  goal_amount decimal(6,2) not null,
+  title nvarchar(255) not null,
+  description nvarchar(max) not null,
+  published_at datetime not null default getdate(),
+  foreign key (creator_id) references Creator,
+  primary key (id)
+  -- ? maybe the combination of goal amount and creator_id must be unique ?
+)
+
+-- TransactionFundraising
+create table Transaction_Fundraising (
+	id integer identity(1, 1) not null,
+	transaction_id integer unique not null,
+	fundraising_id integer not null,
+	foreign key (transaction_id) references Transactions,
+	foreign key (fundraising_id) references Fundraising,
+	primary key (id),
 )
 
 -- Film table
