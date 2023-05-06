@@ -292,4 +292,37 @@ create table CreatorPost (
     primary key (id),
 )
 
+-- CreatorPostLike table
+create table CreatorPostLike (
+    creator_id integer not null,
+    creator_post_id integer not null,
+    foreign key (creator_id) references Creator,
+    foreign key (creator_post_id) references CreatorPost,
+    primary key (creator_id, creator_post_id)
+)
+
+-- FilmManagement table
+create table FilmManagement (
+    film_id integer not null,
+    visibility varchar(20) check (visibility in ('public', 'private')),
+    publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
+    scheduled_publish_date datetime,
+    foreign key (film_id) references Film,
+    primary key (film_id),
+    check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
+        or publication_status != 'scheduled' and scheduled_publish_date is null)
+)
+
+-- EpisodeManagement table
+create table FilmManagement (
+    film_id integer not null,
+    visibility varchar(20) check (visibility in ('public', 'private')),
+    publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
+    scheduled_publish_date datetime,
+    foreign key (film_id) references Film,
+    primary key (film_id),
+    check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
+        or publication_status != 'scheduled' and scheduled_publish_date is null)
+)
+
 
