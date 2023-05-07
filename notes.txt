@@ -8,5 +8,5 @@
 8.  Unfilled:  Subscription
 9.  Unfilled:  Fundraising
 10. Unfilled:  TransactionFundraising                   
-11. CommunityPost: from 47 to 91 -> identity (17, 1)    ∆
+11. CommunityPost: from 47 to 91 -> identity (47, 1)    ∆
 12. ReviewFilm: from 2 to 20 -> identity (2, 1)         ∆

@@ -2138,4 +2138,38 @@ group by F.title, A.first_name, A.last_name, CF.role
 having AVG(CAST(RF.rating AS DECIMAL(4,2))) > 8
 order by average_rating desc;
 
+-- find the creators with biggest number of followers and content created
+SELECT
+  creator_id, A.username, A.first_name, A.last_name,
+  SUM(content_count) AS total_count
+FROM (
+  SELECT creator_id, COUNT(series_id) AS content_count
+  FROM CollaboratorSeries
+  GROUP BY creator_id
 
+  UNION ALL
+
+  SELECT creator_id, COUNT(episode_id) AS content_count
+  FROM CollaboratorEpisode
+  GROUP BY creator_id
+
+  UNION ALL
+
+  SELECT creator_id, COUNT(film_id) AS content_count
+  FROM CollaboratorFilm
+  GROUP BY creator_id
+
+  UNION ALL
+
+  SELECT creator_id, COUNT(user_id) AS content_count
+  FROM Follows
+  GROUP BY creator_id
+) AS subquery
+join Account A on creator_id = A.id
+GROUP BY creator_id, A.username, A.first_name, A.last_name
+ORDER BY total_count DESC
+
+select * from Film
+union all
+select * from Episode
+-- union all
