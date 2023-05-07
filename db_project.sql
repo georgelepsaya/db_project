@@ -2322,3 +2322,11 @@ JOIN (
 GROUP BY C.account_id, A.username
 ORDER BY num_community_posts DESC, total_likes_received DESC;
 
+SELECT F.title, cast(AVG(CAST(RF.rating AS DECIMAL(4,2))) as decimal(4, 2)) AS average_rating,
+       RANK() OVER (ORDER BY cast(AVG(CAST(RF.rating AS DECIMAL(4,2))) as decimal(4, 2)) DESC) AS rank
+FROM Film F
+JOIN ReviewFilm RF ON F.id = RF.film_id
+GROUP BY F.title
+ORDER BY average_rating DESC;
+
+
