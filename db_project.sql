@@ -2119,13 +2119,98 @@ VALUES (3, 'AE', '1234', '2024-12-31', 1),
        (31, 'JC', '3456', '2027-08-31', 29),
        (32, 'DC', '7890', '2028-07-31', 30);
 
+insert into Currency values ('DKK','Danish krone')
+insert into Transactions (user_id, amount, currency, status, created_at)
+values
+    (3, 9, 'USD', 'CO', '2023-05-01 12:00:00'),
+    (4, 9, 'USD', 'CO', '2023-05-02 10:30:00'),
+    (5, 9, 'USD', 'PE', '2023-05-03 14:15:00'),
+    (6, 9, 'USD', 'FA', '2023-05-04 16:45:00'),
+    (7, 9, 'USD', 'CO', '2023-05-05 18:20:00'),
+    (8, 8.04, 'EUR', 'CO', '2023-05-06 11:00:00'),
+    (9, 8.04, 'EUR', 'CO', '2023-05-07 09:45:00'),
+    (10, 8.04, 'EUR', 'CO', '2023-05-08 08:30:00'),
+    (11, 8.04, 'EUR', 'CO', '2023-05-09 07:15:00'),
+    (12, 8.04, 'EUR', 'CO', '2023-05-10 13:00:00'),
+    (13, 8.04, 'EUR', 'PE', '2023-05-11 15:30:00'),
+    (14, 8.04, 'EUR', 'RE', '2023-05-12 14:00:00'),
+    (15, 60.86, 'DKK', 'CO', '2023-05-13 11:45:00'),
+    (16, 8.04, 'EUR', 'CO', '2023-05-14 10:15:00'),
+    (17, 8.04, 'EUR', 'PE', '2023-05-15 12:30:00'),
+	(3, 1.00, 'USD', 'PE', '2023-05-01 12:00:00'),
+    (4, 299.50, 'USD', 'CO', '2023-05-02 10:30:00'),
+    (5, 34.00, 'USD', 'CO', '2023-05-03 14:15:00'),
+    (6, 100.00, 'USD', 'CO', '2023-05-04 16:45:00'),
+    (7, 12.50, 'USD', 'CO', '2023-05-05 18:20:00'),
+    (8, 166.00, 'EUR', 'FA', '2023-05-06 11:00:00'),
+    (9, 36.00, 'EUR', 'CO', '2023-05-07 09:45:00'),
+    (10, 23.00, 'EUR', 'CO', '2023-05-08 08:30:00'),
+    (11, 17.00, 'EUR', 'PE', '2023-05-09 07:15:00'),
+    (12, 8.00, 'EUR', 'CO', '2023-05-10 13:00:00'),
+    (13, 100.00, 'EUR', 'PE', '2023-05-11 15:30:00'),
+    (14, 3.00, 'EUR', 'CO', '2023-05-12 14:00:00'),
+    (15, 14.50, 'DKK', 'CO', '2023-05-13 11:45:00'),
+    (16, 367.00, 'EUR', 'CO', '2023-05-14 10:15:00'),
+    (17, 2.00, 'EUR', 'PE', '2023-05-15 12:30:00')
 
+select * from Transactions
 
+insert into TransactionsCreators values
+(16, 18),
+(17, 20),
+(18, 30),
+(19, 31),
+(20, 32),
+(21, 19)
+
+-- Active subscriptions
+insert into Subscription (user_id, transaction_id, is_active, auto_renewal) values
+(3, 1, 1, 1),
+(4, 2, 1, 1),
+(5, 3, 1, 0),
+(6, 4, 1, 0),
+(7, 5, 1, 1),
+(8, 6, 1, 1),
+(9, 7, 1, 0)
+
+-- Inactive subscriptions
+insert into Subscription (user_id, transaction_id, last_subscription, is_active, auto_renewal) values
+(11, 15, '2022-02-25 14:30:00', 0, 0),
+(12, 16, '2022-01-01 10:15:00', 0, 0),
+(13, 17, '2022-03-12 08:45:00', 0, 0),
+(14, 18, '2022-04-05 12:00:00', 0, 0),
+(15, 19, '2022-05-15 16:20:00', 0, 0),
+(16, 20, '2022-07-01 11:30:00', 0, 0),
+(17, 21, '2022-06-10 09:00:00', 0, 0)
+
+select * from Subscription
+
+-- Fundraising yay!
+insert into Fundraising (creator_id, goal_amount, title, description) values
+(26, 7000.00, 'Indie Film Production', 'Help us fund the production of our independent feature film that explores themes of love and identity in modern society.'),
+(19, 5000.00, 'Animation Short Film', 'Support our team of talented animators as we create a visually stunning short film that explores the beauty and complexity of the natural world.'),
+(28, 9000.00, 'Film Festival Submission Fees', 'We need your help to cover the submission fees for our independent film to various film festivals around the world.'),
+(30, 3000.00, 'Stop-Motion Animation Series', 'Join us in creating a new stop-motion animation series that tells the story of a group of friends on a journey of self-discovery and adventure.')
+
+select * from Fundraising
+
+insert into Transaction_Fundraising values
+(22, 1),
+(23, 4),
+(24, 1),
+(25, 2),
+(26, 1),
+(27, 4),
+(28, 2),
+(29, 4),
+(30, 3)
+
+select * from Transaction_Fundraising
 
 
 -- REPORTS
 
--- Select top films with their average rating and the collaborators and their names and roles
+-- 1. Select top films with their average rating and the collaborators and their names and roles
 select F.title, cast(AVG(CAST(RF.rating AS DECIMAL(4,2))) as decimal(4, 2)) AS average_rating, A.first_name, A.last_name, CF.role
 from Film F
 join ReviewFilm RF on RF.film_id = F.id
@@ -2138,38 +2223,85 @@ group by F.title, A.first_name, A.last_name, CF.role
 having AVG(CAST(RF.rating AS DECIMAL(4,2))) > 8
 order by average_rating desc;
 
--- find the creators with biggest number of followers and content created
-SELECT
+-- 2. Rank the creators by number of followers and content created
+select
   creator_id, A.username, A.first_name, A.last_name,
-  SUM(content_count) AS total_count
-FROM (
-  SELECT creator_id, COUNT(series_id) AS content_count
-  FROM CollaboratorSeries
-  GROUP BY creator_id
+  SUM(content_count) as total_count
+from (
+  select creator_id, COUNT(series_id) as content_count
+  from CollaboratorSeries
+  group by creator_id
 
-  UNION ALL
+  union all
 
-  SELECT creator_id, COUNT(episode_id) AS content_count
-  FROM CollaboratorEpisode
-  GROUP BY creator_id
+  select creator_id, COUNT(episode_id) as content_count
+  from CollaboratorEpisode
+  group by creator_id
 
-  UNION ALL
+  union all
 
-  SELECT creator_id, COUNT(film_id) AS content_count
-  FROM CollaboratorFilm
-  GROUP BY creator_id
+  select creator_id, COUNT(film_id) as content_count
+  from CollaboratorFilm
+  group by creator_id
 
-  UNION ALL
+  union all
 
-  SELECT creator_id, COUNT(user_id) AS content_count
-  FROM Follows
-  GROUP BY creator_id
-) AS subquery
+  select creator_id, COUNT(user_id) as content_count
+  from Follows
+  group by creator_id
+) as subquery
 join Account A on creator_id = A.id
-GROUP BY creator_id, A.username, A.first_name, A.last_name
-ORDER BY total_count DESC
+group by creator_id, A.username, A.first_name, A.last_name
+order by total_count desc
 
-select * from Film
-union all
-select * from Episode
--- union all
+-- 3. 5 most discussed films in the community, based on the number of reviews and the total length of the review content
+select top 5 Film.title, Film.description from
+( select Film_id, count(*) as counts,sum(len(content)) as lengths
+from ReviewFilm
+group by Film_id ) as Stat
+join Film on Film_id = Film.id
+order by Stat.counts desc, Stat.lengths desc
+
+-- 4. 10 most popular categories, based on the number of films and series in each category, and the number of users who follow that category
+select top 10 Category.title from
+(
+    select category_id, count(*) as counts from
+    (
+        select category_id, film_id from FilmCategory
+        union
+        select category_id, series_id from SeriesCategory
+        union
+        select category_id, user_id from UserCategory
+    ) as Sth
+    group by category_id
+) as Stat join Category on category_id = Category.id
+order by Stat.counts desc
+
+-- 5. Find the top 3 most active communities, ranked by the total number of posts and contributors
+SELECT TOP 3 C.id, C.name, COUNT(DISTINCT CP.id) AS post_count, COUNT(DISTINCT CC.creator_id) AS contributor_count
+FROM Community C
+JOIN CommunityPost CP ON C.id = CP.community_id
+JOIN CommunityContributor CC ON C.id = CC.community_id
+GROUP BY C.id, C.name
+ORDER BY post_count DESC, contributor_count DESC;
+
+-- 6. Calculate the number of users who watched each film and rank the films based on that count
+WITH FilmEpisodeCounts AS (
+    SELECT F.id AS content_id, F.title AS content_title, 'Film' AS content_type, COUNT(WF.user_id) AS user_count
+    FROM Film F
+    JOIN WatchesFilm WF ON F.id = WF.film_id
+    GROUP BY F.id, F.title
+
+    UNION ALL
+
+    SELECT E.id AS content_id, E.title AS content_title, 'Episode' AS content_type, COUNT(WE.user_id) AS user_count
+    FROM Episode E
+    JOIN WatchesEpisode WE ON E.id = WE.episode_id
+    GROUP BY E.id, E.title
+)
+
+SELECT content_id, content_title, content_type, user_count,
+       RANK() OVER (ORDER BY user_count DESC) AS rank
+FROM FilmEpisodeCounts
+ORDER BY user_count DESC;
+
