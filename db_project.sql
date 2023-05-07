@@ -2120,3 +2120,22 @@ VALUES (3, 'AE', '1234', '2024-12-31', 1),
        (32, 'DC', '7890', '2028-07-31', 30);
 
 
+
+
+
+-- REPORTS
+
+-- Select top films with their average rating and the collaborators and their names and roles
+select F.title, cast(AVG(CAST(RF.rating AS DECIMAL(4,2))) as decimal(4, 2)) AS average_rating, A.first_name, A.last_name, CF.role
+from Film F
+join ReviewFilm RF on RF.film_id = F.id
+
+join CollaboratorFilm CF on F.id = CF.film_id
+join Creator C on CF.creator_id = C.account_id
+join Account A on C.account_id = A.id
+
+group by F.title, A.first_name, A.last_name, CF.role
+having AVG(CAST(RF.rating AS DECIMAL(4,2))) > 8
+order by average_rating desc;
+
+
