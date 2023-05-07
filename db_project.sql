@@ -2285,7 +2285,7 @@ JOIN CommunityContributor CC ON C.id = CC.community_id
 GROUP BY C.id, C.name
 ORDER BY post_count DESC, contributor_count DESC;
 
--- 6. Calculate the number of users who watched each film and rank the films based on that count
+-- 6. Calculate the number of users who watched each film or episode and rank the films and episodes based on that count
 WITH FilmEpisodeCounts AS (
     SELECT F.id AS content_id, F.title AS content_title, 'Film' AS content_type, COUNT(WF.user_id) AS user_count
     FROM Film F
@@ -2304,4 +2304,21 @@ SELECT content_id, content_title, content_type, user_count,
        RANK() OVER (ORDER BY user_count DESC) AS rank
 FROM FilmEpisodeCounts
 ORDER BY user_count DESC;
+
+-- 7. creators with the highest number of community posts and the number of likes they received for their posts
+SELECT TOP 5
+    C.account_id AS creator_id,
+    A.username AS creator_username,
+    COUNT(CP.id) AS num_community_posts,
+    SUM(CPL.total_likes) AS total_likes_received
+FROM Creator C
+JOIN Account A ON C.account_id = A.id
+JOIN CommunityPost CP ON C.account_id = CP.creator_id
+JOIN (
+    SELECT community_post_id, COUNT(creator_id) AS total_likes
+    FROM CommunityPostLike
+    GROUP BY community_post_id
+) AS CPL ON CP.id = CPL.community_post_id
+GROUP BY C.account_id, A.username
+ORDER BY num_community_posts DESC, total_likes_received DESC;
 
