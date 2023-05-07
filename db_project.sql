@@ -1,6 +1,18 @@
+-- -- Disable foreign key constraints
+-- EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+--
+-- -- Drop tables
+-- DECLARE @sql NVARCHAR(MAX) = '';
+--
+-- SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
+-- FROM INFORMATION_SCHEMA.TABLES
+-- WHERE TABLE_TYPE = 'BASE TABLE';
+--
+-- EXEC sp_executesql @sql;
+
 -- Account table
 CREATE TABLE Account (
-	id integer identity(1, 1) not null,
+	id integer identity(3, 1) not null,
 	username NVARCHAR(30) UNIQUE not null,
 	email NVARCHAR(30) UNIQUE not null,
 	password NVARCHAR(50) not null,
@@ -144,7 +156,7 @@ create table Transactions (
 )
 
 -- TransactionCreators table (transaction from a user to a creator)
-create table Transactions_Creators (
+create table TransactionsCreators (
 	id integer identity(1, 1) not null,
 	transaction_id integer unique not null,
 	creator_id integer not null,
@@ -191,6 +203,8 @@ create table Transaction_Fundraising (
 	primary key (id),
 )
 
+select * from Transaction_Fundraising
+
 -- Film table
 create table Film (
     id integer identity (1, 1) not null,
@@ -200,21 +214,6 @@ create table Film (
     duration time not null,
     thumbnail_url varchar(255),
     created_at datetime not null default getdate(),
-    primary key (id)
-)
-
--- Episode table
-create table Episode (
-    id integer identity (1, 1) not null,
-    title nvarchar(255) not null,
-    description nvarchar(max) not null,
-    content_url varchar(255) not null,
-    number integer not null,
-    season_id integer not null,
-    duration time not null,
-    thumbnail_url varchar(255),
-    created_at datetime not null default getdate(),
-    foreign key (season_id) references Season,
     primary key (id)
 )
 
@@ -236,6 +235,21 @@ create table Season (
     number integer not null,
     primary key (id),
     foreign key (series_id) references Series
+)
+
+-- Episode table
+create table Episode (
+    id integer identity (8, 1) not null,
+    title nvarchar(255) not null,
+    description nvarchar(max) not null,
+    content_url varchar(255) not null,
+    number integer not null,
+    season_id integer not null,
+    duration time not null,
+    thumbnail_url varchar(255),
+    created_at datetime not null default getdate(),
+    foreign key (season_id) references Season,
+    primary key (id)
 )
 
 -- LikesFilm table
@@ -364,7 +378,7 @@ create table CreatorLink (
 
 -- CommunityPost table
 create table CommunityPost (
-    id integer identity (1, 1) not null,
+    id integer identity (47, 1) not null,
     community_id integer not null,
     creator_id integer not null,
     title nvarchar(255) not null,
@@ -385,7 +399,7 @@ create table CommunityPostLike (
 
 -- ReviewFilm table
 create table ReviewFilm (
-    id integer identity (1, 1) not null,
+    id integer identity (2, 1) not null,
     title nvarchar(255) not null,
     content nvarchar(max) not null,
     created_at datetime not null default getdate(),
@@ -568,6 +582,8 @@ VALUES ('Mystery Tales Season 1', 1, 1), -- done
        ('Comedy Corner Season 1', 5, 1),
        ('Comedy Corner Season 2', 5, 2),
        ('Comedy Corner Season 3', 5, 3);
+
+select * from Episode
 
 -- Insert Episodes
 -- Mystery Tales Season 1 Episodes
