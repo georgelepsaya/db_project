@@ -1,3 +1,15 @@
+-- -- Disable foreign key constraints
+-- EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+--
+-- -- Drop tables
+-- DECLARE @sql NVARCHAR(MAX) = '';
+--
+-- SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
+-- FROM INFORMATION_SCHEMA.TABLES
+-- WHERE TABLE_TYPE = 'BASE TABLE';
+--
+-- EXEC sp_executesql @sql;
+
 -- PaymentType table
 create table PaymentType (
 	id varchar(2) not null,
@@ -19,7 +31,7 @@ create table Currency (
 )
 
 -- Account table
-create table Account (
+create table Accounts (
 	account_id integer identity(3, 1) not null,
 	username nvarchar(30) unique not null,
 	email nvarchar(30) unique not null,
@@ -33,13 +45,25 @@ create table Account (
 )
 
 -- Creator table
-create table Creator (
+create table Creators (
 	account_id integer not null,
 	status nvarchar(30),
 	bio nvarchar(max),
 	website varchar(2083),
-	foreign key (account_id) references Account,
+	foreign key (account_id) references Accounts,
 	primary key (account_id)
+)
+
+-- CreatorPost table
+create table Post (
+    id integer identity (1, 1) not null,
+    creator_id integer not null,
+    title nvarchar(255) not null,
+    content nvarchar(max) not null,
+    created_at datetime not null default getdate(),
+    update_at datetime,
+    foreign key (creator_id) references Creators,
+    primary key (id)
 )
 
 -- Address table
@@ -62,7 +86,7 @@ create table Billing (
     created_at datetime not null default(getdate()),
     updated_at datetime not null default(getdate()),
     address_id integer not null,
-    foreign key (account_id) references Account,
+    foreign key (account_id) references Accounts,
     foreign key (payment_type) references PaymentType,
     foreign key (address_id) references Address,
     primary key (billing_id)
@@ -76,7 +100,7 @@ create table Transactions (
   currency varchar(3) not null,
   status varchar(2) not null,
   created_at datetime not null default getdate(),
-  foreign key (account_id) references Account,
+  foreign key (account_id) references Accounts,
   foreign key (currency) references Currency(ISO_code),
   foreign key (status) references Transaction_status(id),
   primary key (transaction_id)
@@ -91,6 +115,11 @@ create table Content (
     content_url varchar(255) not null,
     duration time not null,
     thumbnail_url varchar(255),
+    visibility varchar(20) check (visibility in ('public', 'private')),
+    publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
+    scheduled_publish_date datetime,
+    check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
+        or publication_status != 'scheduled' and scheduled_publish_date is null),
     created_at datetime not null default getdate(),
     primary key (content_id)
 )
@@ -103,7 +132,8 @@ create table Episode (
     number integer,
     foreign key (content_id) references Content(content_id),
     foreign key (series_id) references Content(content_id),
-    primary key (content_id)
+    primary key (content_id),
+    check (content_id != series_id)
 )
 
 -- Category table
@@ -122,16 +152,42 @@ create table Subscription (
 	transaction_id integer unique not null,
 	is_active bit not null,
 	auto_renewal bit not null,
-	foreign key (user_id) references Account,
+	foreign key (user_id) references Accounts,
 	foreign key (transaction_id) references Transactions,
 	primary key (subscription_id)
+)
+
+-- Fundraising table
+create table Fundraising (
+  id integer identity(1, 1) not null,
+  creator_id integer not null,
+  goal_amount decimal(6,2) not null,
+  title nvarchar(255) not null,
+  description nvarchar(max) not null,
+  published_at datetime not null default getdate(),
+  foreign key (creator_id) references Creators,
+  primary key (id)
+)
+
+-- ReviewEpisode table
+create table Review (
+    id integer identity (1, 1) not null,
+    title nvarchar(255) not null,
+    content nvarchar(max) not null,
+    created_at datetime not null default getdate(),
+    rating integer not null check (rating > 1 and rating < 11),
+    episode_id integer not null,
+    account_id integer not null,
+    foreign key (episode_id) references Episode,
+    foreign key (account_id) references Accounts,
+    primary key (id)
 )
 
 -- User Interests
 create table UserInterests (
     user_id integer not null,
     category_id integer not null,
-    foreign key (user_id) references Account,
+    foreign key (user_id) references Accounts,
     foreign key (category_id) references Categories,
     primary key (user_id, category_id)
 )
@@ -141,22 +197,8 @@ create table Follows (
     user_id integer not null,
     creator_id integer not null,
     foreign key (user_id) references Content,
-    foreign key (creator_id) references Creator,
+    foreign key (creator_id) references Creators,
     primary key (user_id, creator_id)
-)
-
--- ReviewContent table
-create table ReviewContent (
-    review_id integer identity (1, 1) not null,
-    content_id integer not null,
-    title nvarchar(255) not null,
-    content nvarchar(max) not null,
-    created_at datetime not null default getdate(),
-    rating integer not null check (rating > 1 and rating < 11),
-    user_id integer not null,
-    foreign key (content_id) references Content,
-    foreign key (user_id) references Account,
-    primary key (review_id)
 )
 
 -- WatchList table
@@ -164,32 +206,20 @@ create table WatchList (
     account_id integer not null,
     content_id integer not null,
     liked_at datetime not null default getdate(),
-    foreign key (account_id) references Account,
+    foreign key (account_id) references Accounts,
     foreign key (content_id) references Content,
     primary key (account_id, content_id)
 )
 
 -- CreatorFollow table
-create table CreatorsFollow (
+create table CreatorFollows (
     creator_followed integer not null,
     creator_follower integer not null,
     started_at datetime not null default getdate(),
-    foreign key (creator_followed) references Creator,
-    foreign key (creator_follower) references Creator,
+    foreign key (creator_followed) references Creators,
+    foreign key (creator_follower) references Creators,
     primary key (creator_followed, creator_follower),
     check (creator_followed != creator_follower)
-)
-
--- ContentManagement table
-create table ContentManagement (
-    content_id integer not null,
-    visibility varchar(20) check (visibility in ('public', 'private')),
-    publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
-    scheduled_publish_date datetime,
-    foreign key (content_id) references Content,
-    primary key (content_id),
-    check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
-        or publication_status != 'scheduled' and scheduled_publish_date is null)
 )
 
 -- ContentCategory table
