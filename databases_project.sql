@@ -17,6 +17,21 @@ create table PaymentType (
 	primary key (id)
 )
 
+-- insert payment types
+insert into PaymentType values
+('AE','American_Express'),
+('VI','Visa'),
+('MA','Mastercard'),
+('DI','Discover'),
+('JC','JCB'),
+('DC','Diners_Club'),
+('UN','UnionPay'),
+('PA','PayPal'),
+('AP','Apple_Pay'),
+('GO','Google_Pay'),
+('AL','AliPay'),
+('WC','WeChat_Pay')
+
 -- TransactionStatus table
 create table Transaction_status (
 	id varchar(2) not null,
@@ -24,11 +39,41 @@ create table Transaction_status (
 	primary key (id)
 )
 
+-- insert transaction status values
+insert into Transaction_status values
+('PE','pending'),
+('CO','completed'),
+('FA','failed'),
+('RE','refunded')
+
 -- Currency table
 create table Currency (
 	ISO_code varchar(3) primary key not null,
 	details nvarchar(20) unique not null
 )
+
+-- insert currency values
+insert into Currency values
+('USD','United States dollar'),
+('EUR','Euro dollar'),
+('JPY','Japanese yen'),
+('GBP','Pound sterling'),
+('AUD','Australian dollar'),
+('CAD','Canadian dollar'),
+('CHF','Switzerland franc'),
+('CNY','Chinese yuan'),
+('HKD','Hong Kong dollar'),
+('NZD','New Zealand dollar'),
+('SGD','Singapore dollar'),
+('SEK','Swedish krona'),
+('KRW','South Korean won'),
+('MXN','Mexican peso'),
+('INR','Indian rupee'),
+('RUB','Russian ruble'),
+('ZAR','South African rand'),
+('TRY','Turkish lira'),
+('BRL','Brazilian real'),
+('DKK','Danish krone')
 
 -- Account table
 create table Accounts (
@@ -994,3 +1039,220 @@ VALUES
 (30, 62, 'Producer'),
 (31, 62, 'Cinematographer'),
 (32, 62, 'Production Designer');
+
+select * from Content where content_type = 'Episode'
+select * from Accounts where account_type = 'user'
+
+-- Series Reviews
+insert into Review (title, content, rating, content_id, account_id)
+values
+    ('Amazing Series', 'I loved every moment of it. The storyline was captivating, and the characters were so well-developed.', 10, 8, 3),
+    ('Decent Series', 'It was a decent watch, but some episodes felt slow.', 7, 8, 4),
+    ('Captivating Story', 'The plot kept me hooked from beginning to end. Excellent storytelling.', 9, 9, 5),
+    ('A bit overrated', 'I think the series is good but not as great as everyone says.', 6, 9, 6),
+    ('Emotional Rollercoaster', 'This series took me on an emotional journey, and I loved it.', 9, 10, 7),
+    ('Good, but not great', 'I enjoyed watching it, but I wouldn`t watch it again.', 6, 10, 8),
+    ('Amazing Animation', 'The animation and art style in this series are simply stunning.', 8, 11, 9),
+    ('Great character development', 'I loved how the characters grew throughout the series.', 9, 11, 10),
+    ('A must-watch', 'Absolutely loved it! Highly recommended for everyone.', 10, 12, 11),
+    ('Interesting concept', 'The concept of the series is unique, and it kept me interested.', 8, 12, 12);
+
+-- Film Reviews
+insert into Review (title, content, rating, content_id, account_id)
+values ('Amazing journey', 'I loved every minute of The Journey Home. The animation and story were superb!', 9, 68, 3),
+    ('Heartwarming', 'The Journey Home really tugged at my heartstrings. A must-watch for dog lovers.', 8, 69, 4),
+    ('Incredible performance', 'The acting in The Last Chance was top-notch, and the story kept me engaged.', 9, 70, 5),
+    ('Stunning visuals', 'The Great Escape had me on the edge of my seat the entire time! Fantastic cinematography.', 10, 71, 6),
+    ('Magical and delightful', 'The Secret Garden is a beautiful film that can be enjoyed by the whole family.', 8, 72, 7),
+    ('A thrilling adventure', 'The Lost City is a perfect blend of action, adventure, and mystery. Highly recommended.', 9, 73, 8),
+    ('Hilarious and heartwarming', 'The Perfect Match is a feel-good movie with a great cast and a charming story.', 8, 74, 9),
+    ('Suspenseful and well-written', 'The Art of Deception kept me guessing until the end. Fantastic plot!', 9, 75, 10),
+    ('Powerful and moving', 'The Price of Freedom is a beautifully crafted film that tells a compelling story.', 10, 76, 11),
+    ('Thought-provoking', 'The Road Less Traveled is a relatable and inspiring coming-of-age tale.', 8, 77, 12),
+    ('Innovative sci-fi', 'The Final Countdown is a thrilling time-travel adventure with a great cast and an engaging story.', 9, 78, 13),
+    ('Terrifying and atmospheric', 'The Dark Forest is a chilling horror film that will keep you on the edge of your seat.', 8, 79, 14),
+    ('A stylish noir', 'The Long Goodbye is a captivating detective story with a great atmosphere and a gripping plot.', 9, 80, 15),
+    ('Action-packed and suspenseful', 'The Secret Agent is a well-crafted espionage thriller that keeps you hooked.', 8, 81, 16),
+    ('Spooky and well-acted', 'The Other Side is a great supernatural thriller with a strong cast and a creepy atmosphere.', 7, 82, 17),
+    ('Non-stop action', 'The Last Stand is an adrenaline-fueled thrill ride with plenty of intense action sequences.', 8, 83, 3),
+    ('A gripping mystery', 'The Great Unknown is a fascinating mystery film that keeps you guessing until the very end.', 9, 84, 4),
+    ('Intense and suspenseful', 'The Final Showdown is a gritty western with a memorable duel and a riveting story.', 8, 85, 5),
+    ('Clever and thrilling', 'The Perfect Heist is an exciting thriller with a well-thought-out plot and a great cast.', 9, 85, 6);
+
+-- Episode Reviews
+insert into Review (title, content, rating, content_id, account_id)
+values ('A strong start', 'The first episode really sets the stage for an amazing series.', 9, 13, 3),
+    ('Not bad', 'This episode was a little slow, but it was still enjoyable.', 7, 14, 4),
+    ('Unexpected twist', 'The twist in this episode caught me off guard. Loved it!', 9, 15, 5),
+    ('Good character development', 'This episode focused on character development, which I appreciated.', 8, 16, 6),
+    ('Intense action', 'The action in this episode was non-stop, making it a thrilling watch.', 9, 17, 7),
+    ('A little boring', 'I found this episode to be a bit dull and slow-paced.', 5, 18, 8),
+    ('Emotionally charged', 'This episode had me in tears by the end. Beautifully done.', 10, 19, 9),
+    ('An important episode', 'This episode delves deeper into the series main themes, making it a must-watch.', 8, 20, 10),
+    ('Great humor', 'This episode was hilarious and light-hearted, a nice break from the heavier content.', 9, 21, 11),
+    ('Exciting cliffhanger', 'The episode ends on a high note, leaving you wanting more.', 8, 22, 12),
+    ('Solid storyline', 'The plot continues to thicken, and I am eager to see what happens next.', 8, 23, 13),
+    ('Nice character growth', 'Character development continues to be a strong point in this series.', 7, 24, 14),
+    ('Surprising reveal', 'The big reveal in this episode was a game changer!', 10, 25, 15),
+    ('Intriguing mystery', 'This episode presents a new mystery that keeps viewers hooked.', 8, 26, 16),
+    ('Suspenseful episode', 'The tension builds up throughout the episode, making it exciting to watch.', 9, 27, 17),
+    ('Entertaining and funny', 'This episode offered a good mix of humor and drama.', 8, 28, 3),
+    ('Thought-provoking themes', 'The themes explored in this episode were deep and thought-provoking.', 9, 29, 4),
+    ('Interesting character arcs', 'The characters continue to evolve in interesting ways.', 7, 30, 5),
+    ('Plot twist', 'This episode included a plot twist I did not see coming!', 8, 31, 6),
+    ('Action-packed', 'A fast-paced episode with lots of action sequences.', 9, 32, 7),
+    ('A bit slow', 'The pacing was a bit slow, but it was still an enjoyable episode.', 6, 33, 8),
+    ('Heartfelt moments', 'This episode included emotional scenes that tugged at my heartstrings.', 9, 34, 9),
+    ('Dramatic tension', 'The drama and tension in this episode kept me engaged throughout.', 8, 35, 10),
+    ('Humorous interlude', 'A lighthearted episode that provided some much-needed comic relief.', 7, 36, 11),
+    ('Gripping cliffhanger', 'This episode leaves you on the edge of your seat, eager for the next installment.', 9, 37, 12),
+    ('Engaging storyline', 'The plot thickens and becomes even more captivating in this episode.', 8, 38, 13),
+    ('Excellent character development', 'This episode does an excellent job of developing its characters.', 8, 39, 14),
+    ('Unexpected turn', 'A surprising turn of events left me eager for more.', 9, 40, 15),
+    ('Intricate plot', 'The plot becomes more complex, making for a captivating watch.', 8, 41, 16),
+    ('Tense episode', 'The suspense in this episode had me on the edge of my seat.', 9, 42, 17),
+    ('Entertaining and well-paced', 'This episode was well-paced and enjoyable from start to finish.', 8, 43, 3),
+    ('Deep themes explored', 'I appreciated the thought-provoking themes presented in this episode.', 9, 44, 4),
+    ('Interesting character dynamics', 'The evolving character relationships kept me engaged.', 7, 45, 5),
+    ('Shocking twist', 'I did not see the twist in this episode coming!', 9, 46, 6),
+    ('Action and excitement', 'This episode was filled with exciting action scenes.', 8, 47, 7),
+    ('A bit of a letdown', 'This episode was not as strong as previous ones, but still had its moments.', 6, 48, 8),
+    ('Emotional impact', 'This episode was emotionally charged and left a lasting impression.', 10, 49, 9),
+    ('Drama and intrigue', 'The dramatic tension in this episode kept me hooked.', 8, 50, 10),
+    ('Comic relief', 'A funny episode that provided a nice break from the drama.', 7, 51, 11),
+    ('Edge-of-your-seat suspense', 'A suspenseful episode that had me eagerly anticipating the next one.', 9, 52, 12),
+    ('Compelling story', 'The storyline continues to captivate and draw me in.', 8, 53, 13),
+    ('Strong character arcs', 'The character development in this episode was top-notch.', 8, 54, 14),
+    ('Unforeseen events', 'This episode was full of surprising and unexpected developments.', 9, 55, 15),
+    ('Complex narrative', 'The narrative becomes more intricate, making for a riveting watch.', 8, 56, 16),
+    ('Nail-biting tension', 'This episode was full of suspense and kept me on the edge of my seat.', 9, 57, 17),
+    ('Engaging and well-paced', 'A well-paced episode that kept my attention throughout.', 8, 58, 3),
+    ('Provocative themes', 'Thought-provoking themes were explored in this episode.', 9, 59, 4),
+    ('Fascinating character interactions', 'The evolving character dynamics in this episode were intriguing.', 7, 60, 5),
+    ('Unexpected plot twist', 'This episode featured a shocking twist I didn`t see coming!', 9, 61, 6),
+    ('Action-packed excitement', 'This episode was full of thrilling action sequences.', 8, 62, 7),
+    ('Somewhat disappointing', 'This episode didn`t quite live up to my expectations, but it had its moments.', 6, 63, 8),
+    ('Emotionally powerful', 'This episode was incredibly moving and left a lasting impact.', 10, 64, 9),
+    ('Dramatic and engaging', 'The drama in this episode kept me thoroughly engaged.', 8, 65, 10),
+    ('Light-hearted and funny', 'A humorous episode that provided some much-needed comic relief.', 7, 66, 11),
+    ('Suspenseful and thrilling', 'This episode had me on the edge of my seat, eager for the next installment.', 9, 67, 12);
+
+-- Insert into Transactions
+insert into Transactions (account_id, amount, currency, status, created_at)
+values (3, 9, 'USD', 'CO', '2023-05-01 12:00:00'),
+    (4, 9, 'USD', 'CO', '2023-05-02 10:30:00'),
+    (5, 9, 'USD', 'PE', '2023-05-03 14:15:00'),
+    (6, 9, 'USD', 'FA', '2023-05-04 16:45:00'),
+    (7, 9, 'USD', 'CO', '2023-05-05 18:20:00'),
+    (8, 8.04, 'EUR', 'CO', '2023-05-06 11:00:00'),
+    (9, 8.04, 'EUR', 'CO', '2023-05-07 09:45:00'),
+    (10, 8.04, 'EUR', 'CO', '2023-05-08 08:30:00'),
+    (11, 8.04, 'EUR', 'CO', '2023-05-09 07:15:00'),
+    (12, 8.04, 'EUR', 'CO', '2023-05-10 13:00:00'),
+    (13, 8.04, 'EUR', 'PE', '2023-05-11 15:30:00'),
+    (14, 8.04, 'EUR', 'RE', '2023-05-12 14:00:00'),
+    (15, 60.86, 'DKK', 'CO', '2023-05-13 11:45:00'),
+    (16, 8.04, 'EUR', 'CO', '2023-05-14 10:15:00'),
+    (17, 8.04, 'EUR', 'PE', '2023-05-15 12:30:00'),
+	(3, 1.00, 'USD', 'PE', '2023-05-01 12:00:00'),
+    (4, 299.50, 'USD', 'CO', '2023-05-02 10:30:00'),
+    (5, 34.00, 'USD', 'CO', '2023-05-03 14:15:00'),
+    (6, 100.00, 'USD', 'CO', '2023-05-04 16:45:00'),
+    (7, 12.50, 'USD', 'CO', '2023-05-05 18:20:00'),
+    (8, 166.00, 'EUR', 'FA', '2023-05-06 11:00:00'),
+    (9, 36.00, 'EUR', 'CO', '2023-05-07 09:45:00'),
+    (10, 23.00, 'EUR', 'CO', '2023-05-08 08:30:00'),
+    (11, 17.00, 'EUR', 'PE', '2023-05-09 07:15:00'),
+    (12, 8.00, 'EUR', 'CO', '2023-05-10 13:00:00'),
+    (13, 100.00, 'EUR', 'PE', '2023-05-11 15:30:00'),
+    (14, 3.00, 'EUR', 'CO', '2023-05-12 14:00:00'),
+    (15, 14.50, 'DKK', 'CO', '2023-05-13 11:45:00'),
+    (16, 367.00, 'EUR', 'CO', '2023-05-14 10:15:00'),
+    (17, 2.00, 'EUR', 'PE', '2023-05-15 12:30:00')
+
+-- Active subscriptions
+insert into Subscription (account_id, transaction_id, is_active, auto_renewal) values
+(3, 1, 1, 1),
+(4, 2, 1, 1),
+(5, 3, 1, 0),
+(6, 4, 1, 0),
+(7, 5, 1, 1),
+(8, 6, 1, 1),
+(9, 7, 1, 0)
+
+-- Inactive subscriptions
+insert into Subscription (account_id, transaction_id, last_billing_date, is_active, auto_renewal)
+values
+(11, 15, '2022-02-25 14:30:00', 0, 0),
+(12, 16, '2022-01-01 10:15:00', 0, 0),
+(13, 17, '2022-03-12 08:45:00', 0, 0),
+(14, 18, '2022-04-05 12:00:00', 0, 0),
+(15, 19, '2022-05-15 16:20:00', 0, 0),
+(16, 20, '2022-07-01 11:30:00', 0, 0),
+(17, 21, '2022-06-10 09:00:00', 0, 0)
+
+INSERT INTO Address (country, city, state, postal_code)
+VALUES ('United States', 'New York', 'New York', '10001'),
+       ('United States', 'Los Angeles', 'California', '90001'),
+       ('United States', 'Chicago', 'Illinois', '60601'),
+       ('United States', 'Houston', 'Texas', '77001'),
+       ('United States', 'Phoenix', 'Arizona', '85001'),
+       ('United Kingdom', 'London', 'England', 'SW1A 1AA'),
+       ('France', 'Paris', 'Île-de-France', '75001'),
+       ('Germany', 'Berlin', 'Berlin', '10115'),
+       ('Spain', 'Madrid', 'Madrid', '28001'),
+       ('Italy', 'Rome', 'Lazio', '00100'),
+       ('Netherlands', 'Amsterdam', 'North Holland', '1011 AA'),
+       ('Belgium', 'Brussels', 'Brussels', '1000'),
+       ('Ireland', 'Dublin', 'Leinster', 'D01 R2PO'),
+       ('Sweden', 'Stockholm', 'Stockholm', '111 21'),
+       ('Denmark', 'Copenhagen', 'Capital Region', '1050'),
+       ('Poland', 'Warsaw', 'Masovian', '00-001'),
+       ('Austria', 'Vienna', 'Vienna', '1010'),
+       ('Switzerland', 'Zurich', 'Zurich', '8001'),
+       ('Greece', 'Athens', 'Attica', '10431'),
+       ('Norway', 'Oslo', 'Oslo', '0151'),
+       ('Finland', 'Helsinki', 'Uusimaa', '00100'),
+       ('Portugal', 'Lisbon', 'Lisbon', '1100-148'),
+       ('Czech Republic', 'Prague', 'Prague', '110 00'),
+       ('Hungary', 'Budapest', 'Central Hungary', '1011'),
+       ('Slovakia', 'Bratislava', 'Bratislava', '811 01'),
+       ('Slovenia', 'Ljubljana', 'Central Slovenia', '1000'),
+       ('Croatia', 'Zagreb', 'City of Zagreb', '10000'),
+       ('Bulgaria', 'Sofia', 'Sofia', '1000'),
+       ('Romania', 'Bucharest', 'Bucharest', '010001'),
+       ('Latvia', 'Riga', 'Riga', 'LV-1050'),
+       ('Estonia', 'Tallinn', 'Harju', '10115');
+
+INSERT INTO Billing (account_id, payment_type, card_last_digits, expiration, address_id)
+VALUES (3, 'AE', '1234', '2024-12-31', 1),
+       (4, 'VI', '5678', '2025-11-30', 2),
+       (5, 'MA', '9012', '2026-10-31', 3),
+       (6, 'DI', '3456', '2027-09-30', 4),
+       (7, 'JC', '7890', '2028-08-31', 5),
+       (8, 'DC', '1234', '2024-07-31', 6),
+       (9, 'UN', '5678', '2025-06-30', 7),
+       (10, 'PA', '9012', '2026-05-31', 8),
+       (11, 'AP', '3456', '2027-04-30', 9),
+       (12, 'GO', '7890', '2028-03-31', 10),
+       (13, 'AL', '1234', '2024-02-28', 11),
+       (14, 'WC', '5678', '2025-01-31', 12),
+       (15, 'AE', '9012', '2026-12-31', 13),
+       (16, 'VI', '3456', '2027-11-30', 14),
+       (17, 'MA', '7890', '2028-10-31', 15),
+       (18, 'DI', '1234', '2024-09-30', 16),
+       (19, 'JC', '5678', '2025-08-31', 17),
+       (20, 'DC', '9012', '2026-07-31', 18),
+       (21, 'UN', '3456', '2027-06-30', 19),
+       (22, 'PA', '7890', '2028-05-31', 20),
+       (23, 'AP', '1234', '2024-04-30', 21),
+       (24, 'GO', '5678', '2025-03-31', 22),
+       (25, 'AL', '9012', '2026-02-28', 23),
+       (26, 'WC', '3456', '2027-01-31', 24),
+       (27, 'AE', '7890', '2028-12-31', 25),
+       (28, 'VI', '1234', '2024-11-30', 26),
+       (29, 'MA', '5678', '2025-10-31', 27),
+       (30, 'DI', '9012', '2026-09-30', 28),
+       (31, 'JC', '3456', '2027-08-31', 29),
+       (32, 'DC', '7890', '2028-07-31', 30);
+
