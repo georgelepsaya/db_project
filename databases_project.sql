@@ -1256,3 +1256,9 @@ VALUES (3, 'AE', '1234', '2024-12-31', 1),
        (31, 'JC', '3456', '2027-08-31', 29),
        (32, 'DC', '7890', '2028-07-31', 30);
 
+insert into Fundraising (creator_id, goal_amount, collected, title, description)
+values
+    (26, 7000.00, 120.00, 'Indie Film Production', 'Help us fund the production of our independent feature film that explores themes of love and identity in modern society.'),
+    (19, 5000.00, 1500.00, 'Animation Short Film', 'Support our team of talented animators as we create a visually stunning short film that explores the beauty and complexity of the natural world.'),
+    (28, 9000.00, 4300.00, 'Film Festival Submission Fees', 'We need your help to cover the submission fees for our independent film to various film festivals around the world.'),
+    (30, 3000.00, 230.00, 'Stop-Motion Animation Series', 'Join us in creating a new stop-motion animation series that tells the story of a group of friends on a journey of self-discovery and adventure.')
