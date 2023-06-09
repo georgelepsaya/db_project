@@ -1,14 +1,14 @@
--- Disable foreign key constraints
-EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
-
--- Drop tables
-DECLARE @sql NVARCHAR(MAX) = '';
-
-SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_TYPE = 'BASE TABLE';
-
-EXEC sp_executesql @sql;
+-- -- Disable foreign key constraints
+-- EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+--
+-- -- Drop tables
+-- DECLARE @sql NVARCHAR(MAX) = '';
+--
+-- SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
+-- FROM INFORMATION_SCHEMA.TABLES
+-- WHERE TABLE_TYPE = 'BASE TABLE';
+--
+-- EXEC sp_executesql @sql;
 
 -- PaymentType table
 create table PaymentType (
@@ -38,6 +38,7 @@ create table Accounts (
 	password nvarchar(50) not null,
 	first_name nvarchar(20),
 	last_name nvarchar(30),
+	account_type varchar(8) check (account_type in ('user', 'creator')),
 	profile_image_url nvarchar(255),
 	registered_at datetime not null default(getdate()),
 	last_login datetime not null default(getdate()),
@@ -112,8 +113,8 @@ create table Content (
     content_type varchar(10) check (content_type in ('Film', 'Series', 'Episode')),
     title nvarchar(255) not null,
     description nvarchar(max) not null,
-    content_url varchar(255) not null,
-    duration time not null,
+    content_url varchar(255),
+    duration time,
     thumbnail_url varchar(255),
     visibility varchar(20) check (visibility in ('public', 'private')),
     publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
@@ -121,15 +122,28 @@ create table Content (
     check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
         or publication_status != 'scheduled' and scheduled_publish_date is null),
     created_at datetime not null default getdate(),
-    primary key (content_id)
+    primary key (content_id),
+    constraint CK_Content_Type_Check check (
+        (content_type = 'Film' and content_url is not null and duration is not null) or
+        (content_type = 'Series' and content_url is null and duration is null)
+    )
+)
+
+-- Season table
+create table Season (
+    series_id integer not null,
+    season_number integer not null,
+    season_title varchar(255) not null,
+    foreign key (series_id) references Content(content_id),
+    primary key (series_id, season_number)
 )
 
 -- Episode table
 create table Episode (
-    content_id integer,
-    series_id integer,
-    season integer,
-    number integer,
+    content_id integer not null,
+    series_id integer not null,
+    season integer not null,
+    number integer not null,
     foreign key (content_id) references Content(content_id),
     foreign key (series_id) references Content(content_id),
     primary key (content_id),
@@ -242,38 +256,38 @@ create table ContentCollaborators (
 )
 
 -- Insert into Accounts table
-INSERT INTO Accounts (username, email, password, first_name, last_name, profile_image_url)
+INSERT INTO Accounts (username, email, password, first_name, last_name, account_type, profile_image_url)
 VALUES
-    ('john_doe', 'john.doe@example.com', 'gizmo42Plat', 'John', 'Doe', 'https://example.com/profiles/john_doe.jpg'),
-    ('jane_doe', 'jane.doe@example.com', 'xYl0tik23s', 'Jane', 'Doe', 'https://example.com/profiles/jane_doe.jpg'),
-    ('michael_smith', 'michael.smith@example.com', 'Qr8abLem9F', 'Michael', 'Smith', 'https://example.com/profiles/michael_smith.jpg'),
-    ('emily_johnson', 'emily.johnson@example.com', '9oJ3xWq1Ht', 'Emily', 'Johnson', 'https://example.com/profiles/emily_johnson.jpg'),
-    ('chris_brown', 'chris.brown@example.com', 'iSw7mzRcP4', 'Chris', 'Brown', 'https://example.com/profiles/chris_brown.jpg'),
-    ('sarah_jackson', 'sarah.jackson@example.com', 'z6KJ2VgXap', 'Sarah', 'Jackson', 'https://example.com/profiles/sarah_jackson.jpg'),
-    ('kevin_williams', 'kevin.williams@example.com', 'B8dR5YfLq0', 'Kevin', 'Williams', 'https://example.com/profiles/kevin_williams.jpg'),
-    ('laura_davis', 'laura.davis@example.com', 'h3FtVl1GzS', 'Laura', 'Davis', 'https://example.com/profiles/laura_davis.jpg'),
-    ('ryan_jones', 'ryan.jones@example.com', 'U9y6EaWpDx', 'Ryan', 'Jones', 'https://example.com/profiles/ryan_jones.jpg'),
-    ('olivia_thompson', 'olivia.thompson@example.com', 'r4KjM5QbNc', 'Olivia', 'Thompson', 'https://example.com/profiles/olivia_thompson.jpg'),
-    ('matt_taylor', 'matt.taylor@example.com', 'C8L0G1SvXy', 'Matt', 'Taylor', 'https://example.com/profiles/matt_taylor.jpg'),
-    ('emma_anderson', 'emma.anderson@example.com', '6oFZwYh7Jk', 'Emma', 'Anderson', 'https://example.com/profiles/emma_anderson.jpg'),
-    ('joshua_martin', 'joshua.martin@example.com', 'R2I5Bn1Qx9', 'Joshua', 'Martin', 'https://example.com/profiles/joshua_martin.jpg'),
-    ('sophia_white', 'sophia.white@example.com', 'T8mE3V6UaP', 'Sophia', 'White', 'https://example.com/profiles/sophia_white.jpg'),
-    ('brandon_garcia', 'brandon.garcia@example.com', '7oD5Wq8LbM', 'Brandon', 'Garcia', 'https://example.com/profiles/brandon_garcia.jpg'),
-    ('kate_miller', 'kate.miller@example.com', '3jKs7fTq9m', 'Kate', 'Miller', 'https://example.com/profiles/kate_miller.jpg'),
-    ('alex_moore', 'alex.moore@example.com', 'a5H8wS6cL1', 'Alex', 'Moore', 'https://example.com/profiles/alex_moore.jpg'),
-    ('grace_lee', 'grace.lee@example.com', '2oY9uX7rA0', 'Grace', 'Lee', 'https://example.com/profiles/grace_lee.jpg'),
-    ('ethan_clark', 'ethan.clark@example.com', 'e1T6zU3pD8', 'Ethan', 'Clark', 'https://example.com/profiles/ethan_clark.jpg'),
-    ('lily_lewis', 'lily.lewis@example.com', 'i4G2mQ9vX6', 'Lily', 'Lewis', 'https://example.com/profiles/lily_lewis.jpg'),
-    ('jack_young', 'jack.young@example.com', 'j5K0fS7bN3', 'Jack', 'Young', 'https://example.com/profiles/jack_young.jpg'),
-    ('chloe_hall', 'chloe.hall@example.com', 'c8L1gA5wY2', 'Chloe', 'Hall', 'https://example.com/profiles/chloe_hall.jpg'),
-    ('noah_patel', 'noah.patel@example.com', 'n9R6tV3uZ0', 'Noah', 'Patel', 'https://example.com/profiles/noah_patel.jpg'),
-    ('isabella_green', 'isabella.green@example.com', 'i7E2hQ1sD4', 'Isabella', 'Green', 'https://example.com/profiles/isabella_green.jpg'),
-    ('liam_turner', 'liam.turner@example.com', 'l8F1jK5rA9', 'Liam', 'Turner', 'https://example.com/profiles/liam_turner.jpg'),
-    ('oliver_carter', 'oliver.carter@example.com', 'o3G6bM9yZ7', 'Oliver', 'Carter', 'https://example.com/profiles/oliver_carter.jpg'),
-    ('amelia_parker', 'amelia.parker@example.com', 'a4H5wS1xU6', 'Amelia', 'Parker', 'https://example.com/profiles/amelia_parker.jpg'),
-    ('william_wright', 'william.wright@example.com', 'w9I0tY3pV8', 'William', 'Wright', 'https://example.com/profiles/william_wright.jpg'),
-    ('mia_thomas', 'mia.thomas@example.com', 'm2J7zK1rB6', 'Mia', 'Thomas', 'https://example.com/profiles/mia_thomas.jpg'),
-    ('jacob_adams', 'jacob.adams@example.com', 'j3K6fA9yX5', 'Jacob', 'Adams', 'https://example.com/profiles/jacob_adams.jpg')
+    ('john_doe', 'john.doe@example.com', 'gizmo42Plat', 'John', 'Doe', 'user', 'https://example.com/profiles/john_doe.jpg'),
+    ('jane_doe', 'jane.doe@example.com', 'xYl0tik23s', 'Jane', 'Doe', 'user', 'https://example.com/profiles/jane_doe.jpg'),
+    ('michael_smith', 'michael.smith@example.com', 'Qr8abLem9F', 'Michael', 'Smith', 'user', 'https://example.com/profiles/michael_smith.jpg'),
+    ('emily_johnson', 'emily.johnson@example.com', '9oJ3xWq1Ht', 'Emily', 'Johnson', 'user', 'https://example.com/profiles/emily_johnson.jpg'),
+    ('chris_brown', 'chris.brown@example.com', 'iSw7mzRcP4', 'Chris', 'Brown', 'user', 'https://example.com/profiles/chris_brown.jpg'),
+    ('sarah_jackson', 'sarah.jackson@example.com', 'z6KJ2VgXap', 'Sarah', 'Jackson', 'user', 'https://example.com/profiles/sarah_jackson.jpg'),
+    ('kevin_williams', 'kevin.williams@example.com', 'B8dR5YfLq0', 'Kevin', 'Williams', 'user', 'https://example.com/profiles/kevin_williams.jpg'),
+    ('laura_davis', 'laura.davis@example.com', 'h3FtVl1GzS', 'Laura', 'Davis', 'user', 'https://example.com/profiles/laura_davis.jpg'),
+    ('ryan_jones', 'ryan.jones@example.com', 'U9y6EaWpDx', 'Ryan', 'Jones', 'user', 'https://example.com/profiles/ryan_jones.jpg'),
+    ('olivia_thompson', 'olivia.thompson@example.com', 'r4KjM5QbNc', 'Olivia', 'Thompson', 'user', 'https://example.com/profiles/olivia_thompson.jpg'),
+    ('matt_taylor', 'matt.taylor@example.com', 'C8L0G1SvXy', 'Matt', 'Taylor', 'user', 'https://example.com/profiles/matt_taylor.jpg'),
+    ('emma_anderson', 'emma.anderson@example.com', '6oFZwYh7Jk', 'Emma', 'Anderson', 'user', 'https://example.com/profiles/emma_anderson.jpg'),
+    ('joshua_martin', 'joshua.martin@example.com', 'R2I5Bn1Qx9', 'Joshua', 'Martin', 'user', 'https://example.com/profiles/joshua_martin.jpg'),
+    ('sophia_white', 'sophia.white@example.com', 'T8mE3V6UaP', 'Sophia', 'White', 'user', 'https://example.com/profiles/sophia_white.jpg'),
+    ('brandon_garcia', 'brandon.garcia@example.com', '7oD5Wq8LbM', 'Brandon', 'Garcia', 'user', 'https://example.com/profiles/brandon_garcia.jpg'),
+    ('kate_miller', 'kate.miller@example.com', '3jKs7fTq9m', 'Kate', 'Miller', 'creator', 'https://example.com/profiles/kate_miller.jpg'),
+    ('alex_moore', 'alex.moore@example.com', 'a5H8wS6cL1', 'Alex', 'Moore', 'creator', 'https://example.com/profiles/alex_moore.jpg'),
+    ('grace_lee', 'grace.lee@example.com', '2oY9uX7rA0', 'Grace', 'Lee', 'creator', 'https://example.com/profiles/grace_lee.jpg'),
+    ('ethan_clark', 'ethan.clark@example.com', 'e1T6zU3pD8', 'Ethan', 'Clark', 'creator', 'https://example.com/profiles/ethan_clark.jpg'),
+    ('lily_lewis', 'lily.lewis@example.com', 'i4G2mQ9vX6', 'Lily', 'Lewis', 'creator', 'https://example.com/profiles/lily_lewis.jpg'),
+    ('jack_young', 'jack.young@example.com', 'j5K0fS7bN3', 'Jack', 'Young', 'creator', 'https://example.com/profiles/jack_young.jpg'),
+    ('chloe_hall', 'chloe.hall@example.com', 'c8L1gA5wY2', 'Chloe', 'Hall', 'creator', 'https://example.com/profiles/chloe_hall.jpg'),
+    ('noah_patel', 'noah.patel@example.com', 'n9R6tV3uZ0', 'Noah', 'Patel', 'creator', 'https://example.com/profiles/noah_patel.jpg'),
+    ('isabella_green', 'isabella.green@example.com', 'i7E2hQ1sD4', 'Isabella', 'Green', 'creator', 'https://example.com/profiles/isabella_green.jpg'),
+    ('liam_turner', 'liam.turner@example.com', 'l8F1jK5rA9', 'Liam', 'Turner', 'creator', 'https://example.com/profiles/liam_turner.jpg'),
+    ('oliver_carter', 'oliver.carter@example.com', 'o3G6bM9yZ7', 'Oliver', 'Carter', 'creator', 'https://example.com/profiles/oliver_carter.jpg'),
+    ('amelia_parker', 'amelia.parker@example.com', 'a4H5wS1xU6', 'Amelia', 'Parker', 'creator', 'https://example.com/profiles/amelia_parker.jpg'),
+    ('william_wright', 'william.wright@example.com', 'w9I0tY3pV8', 'William', 'Wright', 'creator', 'https://example.com/profiles/william_wright.jpg'),
+    ('mia_thomas', 'mia.thomas@example.com', 'm2J7zK1rB6', 'Mia', 'Thomas', 'creator', 'https://example.com/profiles/mia_thomas.jpg'),
+    ('jacob_adams', 'jacob.adams@example.com', 'j3K6fA9yX5', 'Jacob', 'Adams', 'creator', 'https://example.com/profiles/jacob_adams.jpg')
 
 select * from Accounts
 
@@ -298,3 +312,28 @@ values
 
 select * from Creators
 
+-- Insert into Content: Series
+-- Insert Series
+insert into Content (content_type, title, description, thumbnail_url)
+values ('Series', 'Mystery Tales', 'A series of thrilling mystery stories.', 'mystery_tales_thumbnail.jpg'),
+       ('Series', 'Sci-Fi Chronicles', 'Explore the fascinating world of science fiction.', 'sci_fi_chronicles_thumbnail.jpg'),
+       ('Series', 'Adventure Island', 'An exciting adventure series set on a remote island.', 'adventure_island_thumbnail.jpg'),
+       ('Series', 'Drama Diaries', 'A collection of dramatic stories that touch the heart.', 'drama_diaries_thumbnail.jpg'),
+       ('Series', 'Comedy Corner', 'A series filled with hilarious comedic tales.', 'comedy_corner_thumbnail.jpg');
+
+select * from Content
+
+-- Insert into Seasons
+insert into Season (season_title, series_id, season_number)
+values ('Mystery Tales Season 1', 1, 1),
+       ('Mystery Tales Season 2', 1, 2),
+       ('Sci-Fi Chronicles Season 1', 2, 1),
+       ('Sci-Fi Chronicles Season 2', 2, 2),
+       ('Adventure Island Season 1', 3, 1),
+       ('Adventure Island Season 2', 3, 2),
+       ('Adventure Island Season 3', 3, 3),
+       ('Drama Diaries Season 1', 4, 1),
+       ('Drama Diaries Season 2', 4, 2),
+       ('Comedy Corner Season 1', 5, 1),
+       ('Comedy Corner Season 2', 5, 2),
+       ('Comedy Corner Season 3', 5, 3);
