@@ -116,16 +116,21 @@ create table Content (
     content_url varchar(255),
     duration time,
     thumbnail_url varchar(255),
+    series_id integer,
+    season_number integer,
+    episode_number integer,
     visibility varchar(20) check (visibility in ('public', 'private')),
     publication_status varchar(20) check (publication_status in ('published', 'draft', 'scheduled')),
     scheduled_publish_date datetime,
+    created_at datetime not null default getdate(),
+    foreign key (series_id) references Content(content_id),
+    primary key (content_id),
     check ((publication_status = 'scheduled' and scheduled_publish_date is not null)
         or publication_status != 'scheduled' and scheduled_publish_date is null),
-    created_at datetime not null default getdate(),
-    primary key (content_id),
     constraint CK_Content_Type_Check check (
         (content_type = 'Film' and content_url is not null and duration is not null) or
-        (content_type = 'Series' and content_url is null and duration is null)
+        (content_type = 'Series' and content_url is null and duration is null) or
+        (content_type = 'Episode' and series_id is not null and season_number is not null and episode_number is not null)
     )
 )
 
@@ -136,18 +141,6 @@ create table Season (
     season_title varchar(255) not null,
     foreign key (series_id) references Content(content_id),
     primary key (series_id, season_number)
-)
-
--- Episode table
-create table Episode (
-    content_id integer not null,
-    series_id integer not null,
-    season integer not null,
-    number integer not null,
-    foreign key (content_id) references Content(content_id),
-    foreign key (series_id) references Content(content_id),
-    primary key (content_id),
-    check (content_id != series_id)
 )
 
 -- Category table
@@ -183,16 +176,16 @@ create table Fundraising (
   primary key (id)
 )
 
--- ReviewEpisode table
+-- ReviewTable
 create table Review (
     id integer identity (1, 1) not null,
     title nvarchar(255) not null,
     content nvarchar(max) not null,
     created_at datetime not null default getdate(),
     rating integer not null check (rating > 1 and rating < 11),
-    episode_id integer not null,
+    content_id integer not null,
     account_id integer not null,
-    foreign key (episode_id) references Episode,
+    foreign key (content_id) references Content,
     foreign key (account_id) references Accounts,
     primary key (id)
 )
@@ -325,15 +318,108 @@ select * from Content
 
 -- Insert into Seasons
 insert into Season (season_title, series_id, season_number)
-values ('Mystery Tales Season 1', 1, 1),
-       ('Mystery Tales Season 2', 1, 2),
-       ('Sci-Fi Chronicles Season 1', 2, 1),
-       ('Sci-Fi Chronicles Season 2', 2, 2),
-       ('Adventure Island Season 1', 3, 1),
-       ('Adventure Island Season 2', 3, 2),
-       ('Adventure Island Season 3', 3, 3),
-       ('Drama Diaries Season 1', 4, 1),
-       ('Drama Diaries Season 2', 4, 2),
-       ('Comedy Corner Season 1', 5, 1),
-       ('Comedy Corner Season 2', 5, 2),
-       ('Comedy Corner Season 3', 5, 3);
+values ('Mystery Tales Season 1', 8, 1),
+       ('Mystery Tales Season 2', 8, 2),
+       ('Sci-Fi Chronicles Season 1', 9, 1),
+       ('Sci-Fi Chronicles Season 2', 9, 2),
+       ('Adventure Island Season 1', 10, 1),
+       ('Adventure Island Season 2', 10, 2),
+       ('Adventure Island Season 3', 10, 3),
+       ('Drama Diaries Season 1', 11, 1),
+       ('Drama Diaries Season 2', 11, 2),
+       ('Comedy Corner Season 1', 12, 1),
+       ('Comedy Corner Season 2', 12, 2),
+       ('Comedy Corner Season 3', 12, 3);
+
+select * from Season
+
+select * from Content where content_type = 'Series'
+
+-- Insert into Content: Episodes - Mystery Tales Season 1
+insert into Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+values ('Episode', 'The Haunted House', 'A group of friends explore a haunted house.', 'mystery_tales_s1e1.mp4', 8, 1, 1, '00:45:00', 'mystery_tales_s1e1_thumbnail.jpg'),
+       ('Episode', 'The Lost Treasure', 'A treasure hunt leads to unexpected discoveries.', 'mystery_tales_s1e2.mp4', 8, 1, 2, '00:42:00', 'mystery_tales_s1e2_thumbnail.jpg'),
+       ('Episode', 'The Secret Chamber', 'A hidden chamber reveals dark secrets.', 'mystery_tales_s2e1.mp4', 8, 1, 3, '00:47:00', 'mystery_tales_s2e1_thumbnail.jpg'),
+       ('Episode', 'The Mysterious Stranger', 'A stranger arrives in town with a hidden agenda.', 'mystery_tales_s2e2.mp4', 8, 1, 4, '00:44:00', 'mystery_tales_s2e2_thumbnail.jpg'),
+       ('Episode', 'The Vanishing Artist', 'A talented artist disappears under mysterious circumstances.', 'mystery_tales_s1e3.mp4', 8, 1, 5, '00:40:00', 'mystery_tales_s1e3_thumbnail.jpg');
+
+-- Mystery Tales Season 2 Episodes
+insert into Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+values ('Episode', 'The Phantom Thief', 'A master thief eludes the authorities.', 'mystery_tales_s2_e1.mp4', 8, 2, 1, '00:48:00', 'mystery_tales_s2e3_thumbnail.jpg'),
+       ('Episode', 'The Final Trick', 'A magician`s final trick leads to a shocking revelation.', 'mystery_tales_s2_e2.mp4', 8, 2, 2, '00:41:00', 'mystery_tales_s2e4_thumbnail.jpg'),
+       ('Episode', 'The Shadow Society', 'An undercover agent infiltrates a secret society.', 'mystery_tales_s2_e3.mp4', 8, 2, 3, '00:46:00', 'mystery_tales_s2e5_thumbnail.jpg'),
+       ('Episode', 'The Hidden Clue', 'A detective finds a vital clue that cracks the case.', 'mystery_tales_s2_e4.mp4', 8, 2, 4, '00:43:00', 'mystery_tales_s1e4_thumbnail.jpg'),
+       ('Episode', 'The Cryptic Code', 'A cryptic code holds the key to solving a puzzling mystery.', 'mystery_tales_s2_e5.mp4', 8, 2, 5, '00:44:00', 'mystery_tales_s1e5_thumbnail.jpg');
+
+-- Sci-Fi Chronicles Season 1 episodes
+insert into Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+values ('Episode', 'The Time Machine', 'An inventor creates a time machine and explores the future.', 'sci_fi_chronicles_s1e1.mp4', 9, 1, 1, '00:50:00', 'sci_fi_chronicles_s1e1_thumbnail.jpg'),
+       ('Episode', 'The Alien Encounter', 'A group of scientists make contact with an alien species.', 'sci_fi_chronicles_s1e2.mp4', 9, 1, 2, '00:52:00', 'sci_fi_chronicles_s1e2_thumbnail.jpg'),
+       ('Episode', 'The Martian Chronicles', 'A mission to Mars uncovers a hidden civilization.', 'sci_fi_chronicles_s1e3.mp4', 9, 1, 3, '00:55:00', 'sci_fi_chronicles_s1e3_thumbnail.jpg'),
+       ('Episode', 'The Space Station', 'Astronauts aboard a space station face an unexpected crisis.', 'sci_fi_chronicles_s1e4.mp4', 9, 1, 4, '00:47:00', 'sci_fi_chronicles_s1e4_thumbnail.jpg'),
+       ('Episode', 'The Black Hole', 'A team of scientists investigates a mysterious black hole.', 'sci_fi_chronicles_s1e5.mp4', 9, 1, 5, '00:49:00', 'sci_fi_chronicles_s1e5_thumbnail.jpg');
+
+-- Sci-Fi Chronicles Season 2 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The Multiverse Theory', 'A scientist explores the possibility of parallel universes.', 'sci_fi_chronicles_s2e1.mp4', 9, 2, 1, '00:51:00', 'sci_fi_chronicles_s2e1_thumbnail.jpg'),
+       ('Episode', 'The Time Paradox', 'A time traveler accidentally alters the course of history.', 'sci_fi_chronicles_s2e2.mp4', 9, 2, 2, '00:54:00', 'sci_fi_chronicles_s2e2_thumbnail.jpg'),
+       ('Episode', 'The Quantum Leap', 'An experiment in quantum physics leads to extraordinary consequences.', 'sci_fi_chronicles_s2e3.mp4', 9, 2, 3, '00:53:00', 'sci_fi_chronicles_s2e3_thumbnail.jpg'),
+       ('Episode', 'The Galactic War', 'An intergalactic war threatens the fate of the universe.', 'sci_fi_chronicles_s2e4.mp4', 9, 2, 4, '00:58:00', 'sci_fi_chronicles_s2e4_thumbnail.jpg'),
+       ('Episode', 'The Android Revolution', 'A society of androids fights for their freedom.', 'sci_fi_chronicles_s2e5.mp4', 9, 2, 5, '00:56:00', 'sci_fi_chronicles_s2e5_thumbnail.jpg');
+
+-- Adventure Island Season 1 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'Shipwrecked', 'A group of adventurers becomes shipwrecked on a mysterious island.', 'adventure_island_s1e1.mp4', 10, 1, 1, '00:45:00', 'adventure_island_s1e1_thumbnail.jpg'),
+       ('Episode', 'The Jungle Maze', 'The adventurers navigate a dangerous jungle filled with traps.', 'adventure_island_s1e2.mp4', 10, 1, 2, '00:47:00', 'adventure_island_s1e2_thumbnail.jpg'),
+       ('Episode', 'The Hidden Temple', 'The group discovers an ancient temple with hidden secrets.', 'adventure_island_s1e3.mp4', 10, 1, 3, '00:50:00', 'adventure_island_s1e3_thumbnail.jpg'),
+       ('Episode', 'The Cursed Treasure', 'A legendary treasure is found, but it comes with a terrible curse.', 'adventure_island_s1e4.mp4', 10, 1, 4, '00:48:00', 'adventure_island_s1e4_thumbnail.jpg'),
+       ('Episode', 'The Great Escape', 'The adventurers devise a daring plan to escape the island.', 'adventure_island_s1e5.mp4', 10, 1, 5, '00:46:00', 'adventure_island_s1e5_thumbnail.jpg');
+
+-- Adventure Island Season 2 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The Island Revisited', 'The group returns to the island to rescue a friend left behind.', 'adventure_island_s2e1.mp4', 10, 2, 1, '00:44:00', 'adventure_island_s2e1_thumbnail.jpg'),
+       ('Episode', 'The Lost City', 'The adventurers discover the remains of a long-lost civilization.', 'adventure_island_s2e2.mp4', 10, 2, 2, '00:49:00', 'adventure_island_s2e2_thumbnail.jpg'),
+       ('Episode', 'The Underground River', 'The group ventures into an underground river filled with danger.', 'adventure_island_s2e3.mp4', 10, 2, 3, '00:52:00', 'adventure_island_s2e3_thumbnail.jpg'),
+       ('Episode', 'The Island`s Secret', 'The island`s true purpose is finally revealed.', 'adventure_island_s2e4.mp4', 10, 2, 4, '00:55:00', 'adventure_island_s2e4_thumbnail.jpg'),
+       ('Episode', 'The Final Battle', 'The adventurers face off against their greatest foe.', 'adventure_island_s2e5.mp4', 10, 2, 5, '00:58:00', 'adventure_island_s2e5_thumbnail.jpg');
+
+-- -- Adventure Island Season 3 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The New Island', 'The adventurers embark on a new journey to a mysterious island.', 'adventure_island_s3e1.mp4', 10, 3, 1, '00:46:00', 'adventure_island_s3e1_thumbnail.jpg'),
+       ('Episode', 'The Hidden Cave', 'A hidden cave reveals clues to the island`s past.', 'adventure_island_s3e2.mp4', 10, 3, 2, '00:48:00', 'adventure_island_s3e2_thumbnail.jpg'),
+       ('Episode', 'The Ancient Ruins', 'The group stumbles upon ancient ruins with powerful artifacts.', 'adventure_island_s3e3.mp4', 10, 3, 3, '00:51:00', 'adventure_island_s3e3_thumbnail.jpg'),
+       ('Episode', 'The Forbidden Zone', 'The adventurers dare to enter a forbidden part of the island.', 'adventure_island_s3e4.mp4', 10, 3, 4, '00:53:00', 'adventure_island_s3e4_thumbnail.jpg'),
+       ('Episode', 'The Final Voyage', 'The group faces their most dangerous challenge yet.', 'adventure_island_s3e5.mp4', 10, 3, 5, '00:57:00', 'adventure_island_s3e5_thumbnail.jpg');
+
+-- Drama Diaries Season 1 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'A New Beginning', 'A young woman moves to a new city to start her life anew.', 'drama_diaries_s1e1.mp4', 11, 1, 1, '00:42:00', 'drama_diaries_s1e1_thumbnail.jpg'),
+       ('Episode', 'The Love Triangle', 'A complicated love triangle threatens friendships.', 'drama_diaries_s1e2.mp4', 11, 1, 2, '00:45:00', 'drama_diaries_s1e2_thumbnail.jpg'),
+       ('Episode', 'The Broken Friendship', 'A misunderstanding leads to a broken friendship.', 'drama_diaries_s1e3.mp4', 11, 1, 3, '00:47:00', 'drama_diaries_s1e3_thumbnail.jpg'),
+       ('Episode', 'The Family Secret', 'A family secret is revealed, changing relationships forever.', 'drama_diaries_s1e4.mp4', 11, 1, 4, '00:44:00', 'drama_diaries_s1e4_thumbnail.jpg'),
+       ('Episode', 'The Unexpected Proposal', 'A surprise proposal leads to difficult decisions.', 'drama_diaries_s1e5.mp4', 11, 1, 5, '00:46:00', 'drama_diaries_s1e5_thumbnail.jpg');
+
+-- Drama Diaries Season 2 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The New Job', 'A new job brings new challenges and opportunities.', 'drama_diaries_s2e1.mp4', 11, 2, 1, '00:43:00', 'drama_diaries_s2e1_thumbnail.jpg'),
+       ('Episode', 'The Long-Lost Friend', 'An old friend reappears, bringing up buried memories.', 'drama_diaries_s2e2.mp4', 11, 2, 2, '00:41:00', 'drama_diaries_s2e2_thumbnail.jpg'),
+       ('Episode', 'The Heartbreak', 'Heartbreak leads to personal growth and healing.', 'drama_diaries_s2e3.mp4', 11, 2, 3, '00:49:00', 'drama_diaries_s2e3_thumbnail.jpg'),
+       ('Episode', 'The Reconciliation', 'A broken friendship is mended through understanding and forgiveness.', 'drama_diaries_s2e4.mp4', 11, 2, 4, '00:47:00', 'drama_diaries_s2e4_thumbnail.jpg'),
+       ('Episode', 'The Final Goodbye', 'A farewell brings closure and new beginnings.', 'drama_diaries_s2e5.mp4', 11, 2, 5, '00:50:00', 'drama_diaries_s2e5_thumbnail.jpg');
+
+-- Comedy Corner Season 1 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The Awkward Date', 'A disastrous first date leads to hilarious misunderstandings.', 'comedy_central_s1e1.mp4', 12, 1, 1, '00:30:00', 'comedy_central_s1e1_thumbnail.jpg'),
+       ('Episode', 'The Unusual Roommate', 'A quirky roommate turns everyday life upside down.', 'comedy_central_s1e2.mp4', 12, 1, 2, '00:28:00', 'comedy_central_s1e2_thumbnail.jpg'),
+       ('Episode', 'The Family Reunion', 'A chaotic family reunion brings out the best and worst in everyone.', 'comedy_central_s1e3.mp4', 12, 1, 3, '00:32:00', 'comedy_central_s1e3_thumbnail.jpg'),
+       ('Episode', 'The Misadventures of Pet Sitting', 'Pet sitting turns into an adventure full of hilarious mishaps.', 'comedy_central_s1e4.mp4', 12, 1, 4, '00:29:00', 'comedy_central_s1e4_thumbnail.jpg'),
+       ('Episode', 'The Office Prank War', 'A prank war at the office goes hilariously out of control.', 'comedy_central_s1e5.mp4', 12, 1, 5, '00:31:00', 'comedy_central_s1e5_thumbnail.jpg');
+
+-- Comedy Central Season 2 episodes
+INSERT INTO Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
+VALUES ('Episode', 'The Wedding Disaster', 'A series of hilarious mishaps unfold at a friend`s wedding.', 'comedy_central_s2e1.mp4', 12, 2, 1, '00:33:00', 'comedy_central_s2e1_thumbnail.jpg'),
+       ('Episode', 'The Unlucky Vacation', 'A vacation filled with comical misfortunes becomes a trip to remember.', 'comedy_central_s2e2.mp4', 12, 2, 2, '00:34:00', 'comedy_central_s2e2_thumbnail.jpg'),
+       ('Episode', 'The Cooking Catastrophe', 'An attempt at a fancy dinner party ends in a culinary disaster.', 'comedy_central_s2e3.mp4', 12, 2, 3, '00:30:00', 'comedy_central_s2e3_thumbnail.jpg'),
+       ('Episode', 'The Babysitting Fiasco', 'Babysitting for a neighbor takes a hilariously chaotic turn.', 'comedy_central_s2e4.mp4', 12, 2, 4, '00:28:00', 'comedy_central_s2e4_thumbnail.jpg'),
+       ('Episode', 'The Unexpected Reunion', 'An impromptu high school reunion results in side-splitting scenarios.', 'comedy_central_s2e5.mp4', 12, 2, 5, '00:32:00', 'comedy_central_s2e5_thumbnail.jpg');
+
