@@ -920,6 +920,7 @@ values
     (22, 2, 'Director')
 
 select id from Episode;
+select title from Episode
 
 insert into CollaboratorEpisode (creator_id, episode_id, role)
 values
