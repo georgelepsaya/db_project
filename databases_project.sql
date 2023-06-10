@@ -1293,6 +1293,23 @@ join Review RF on C.content_id = RF.content_id
 where content_type = 'Film'
 group by C.content_id, C.title, C.description;
 
+-- 2
+SELECT
+    c.account_id,
+    a.username,
+    COUNT(DISTINCT cf.creator_follower) AS follower_count
+FROM
+    Creators c
+JOIN
+    Accounts a ON c.account_id = a.account_id
+LEFT JOIN
+    CreatorFollows cf ON c.account_id = cf.creator_followed
+GROUP BY
+    c.account_id,
+    a.username
+ORDER BY
+    follower_count DESC;
+
 -- 3. Select ranked most discussed content, based on the number of reviews
 with RankedByReviews as (
     select C.content_id C_id, count(*) ReviewCount
@@ -1306,4 +1323,8 @@ select
 from RankedByReviews
 join Content C on C.content_id = C_id
 
--- 4. 
+-- 4. 10 most popular categories, based on the number of films and series in each category
+select * from Categories
+join ContentCategory CC on Categories.category_id = CC.category_id
+join Content C on CC.content_id = C.content_id
+where C.content_type = ''
