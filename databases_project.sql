@@ -1263,4 +1263,36 @@ values
     (28, 9000.00, 4300.00, 'Film Festival Submission Fees', 'We need your help to cover the submission fees for our independent film to various film festivals around the world.'),
     (30, 3000.00, 230.00, 'Stop-Motion Animation Series', 'Join us in creating a new stop-motion animation series that tells the story of a group of friends on a journey of self-discovery and adventure.')
 
+-- All Selects to check
+-- select * from Transactions
+-- select * from Fundraising
+-- select * from Subscription
+-- select * from Billing
+-- select * from Review
+-- select * from Accounts
+-- select * from Creators
+-- select * from Follows
+-- select * from CreatorFollows
+-- select * from Post
+-- select * from ContentCollaborators
+-- select * from Content
+-- select * from Season
+-- select * from WatchList
+-- select * from ContentCategory
+-- select * from UserInterests
+-- select * from Categories
+-- select * from Address
 
+-- Reports
+
+-- 1. Select films, ranked by review ratings; and their creators
+
+select dense_rank() over (order by avg(RF.rating*1.0) desc) Rank,
+    C.content_id, C.title as Title, C.description as Description, avg(RF.rating*1.0) as Average_Rating
+from Content C
+join Review RF on C.content_id = RF.content_id
+where content_type = 'Film'
+group by C.content_id, C.title, C.description
+
+
+-- 2.
