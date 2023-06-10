@@ -1263,25 +1263,78 @@ values
     (28, 9000.00, 4300.00, 'Film Festival Submission Fees', 'We need your help to cover the submission fees for our independent film to various film festivals around the world.'),
     (30, 3000.00, 230.00, 'Stop-Motion Animation Series', 'Join us in creating a new stop-motion animation series that tells the story of a group of friends on a journey of self-discovery and adventure.')
 
--- All Selects to check
--- select * from Transactions
--- select * from Fundraising
--- select * from Subscription
--- select * from Billing
--- select * from Review
--- select * from Accounts
--- select * from Creators
--- select * from Follows
--- select * from CreatorFollows
--- select * from Post
--- select * from ContentCollaborators
--- select * from Content
--- select * from Season
--- select * from WatchList
--- select * from ContentCategory
--- select * from UserInterests
--- select * from Categories
--- select * from Address
+-- Updating Film Management part
+update Content
+set visibility = 'public', publication_status = 'published', scheduled_publish_date = NULL
+where content_id = 68
+update Content
+set visibility = 'private',  publication_status = 'published', scheduled_publish_date = NULL
+where content_id = 69
+update Content
+set visibility = 'public',   publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 70
+update Content
+set visibility = 'private',  publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 71
+update Content
+set visibility = 'public',   publication_status = 'scheduled', scheduled_publish_date = '2023-05-15 12:00:00'
+where content_id = 72
+update Content
+set visibility = 'private',  publication_status = 'scheduled', scheduled_publish_date = '2023-05-20 15:00:00'
+where content_id = 73
+update Content
+set visibility = 'public',   publication_status = 'published', scheduled_publish_date = NULL
+where content_id = 74
+update Content
+set visibility = 'private',  publication_status = 'published', scheduled_publish_date = NULL
+where content_id = 75
+update Content
+set visibility = 'public',   publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 76
+update Content
+set visibility = 'private',  publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 77
+update Content
+set visibility = 'public',   publication_status = 'scheduled', scheduled_publish_date = '2023-06-01 18:00:00'
+where content_id = 78
+update Content
+set visibility = 'private',  publication_status = 'scheduled', scheduled_publish_date = '2023-06-05 10:00:00'
+where content_id = 79
+update Content
+set visibility = 'private',  publication_status = 'published', scheduled_publish_date = NULL
+where content_id = 80
+update Content
+set visibility = 'public',   publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 81
+update Content
+set visibility = 'private',  publication_status = 'draft',     scheduled_publish_date = NULL
+where content_id = 82
+update Content
+set visibility = 'public',   publication_status = 'scheduled', scheduled_publish_date = '2023-07-12 14:00:00'
+where content_id = 83
+update Content
+set visibility = 'private',  publication_status = 'scheduled', scheduled_publish_date = '2023-07-15 19:00:00'
+where content_id = 84
+update Content
+set visibility = 'private',  publication_status = 'scheduled', scheduled_publish_date = '2023-07-21 14:00:00'
+where content_id = 85
+
+-- Updating Series Management part
+update Content
+set visibility = 'public',   publication_status = 'published',   scheduled_publish_date = NULL
+where content_id = 8
+update Content
+set visibility = 'private',  publication_status = 'published',   scheduled_publish_date = NULL
+where content_id = 9
+update Content
+set visibility = 'public',   publication_status = 'draft',       scheduled_publish_date = NULL
+where content_id = 10
+update Content
+set visibility = 'private',  publication_status = 'draft',       scheduled_publish_date = NULL
+where content_id = 11
+update Content
+set visibility = 'public',   publication_status = 'scheduled',   scheduled_publish_date = '2023-05-25 12:00:00'
+where content_id = 12
 
 -- Reports
 
@@ -1293,7 +1346,7 @@ join Review RF on C.content_id = RF.content_id
 where content_type = 'Film'
 group by C.content_id, C.title, C.description;
 
--- 2
+-- 2. Rank the creators by number of followers
 SELECT
     c.account_id,
     a.username,
@@ -1402,3 +1455,17 @@ FROM (
 ) AS followers
 GROUP BY account_id, username
 ORDER BY max_follows DESC
+
+-- 11. Rank categories by the amount of users interested in them
+SELECT c.category_id, c.title, COUNT(ui.account_id) AS user_count
+FROM Categories c
+LEFT JOIN UserInterests ui ON c.category_id = ui.category_id
+GROUP BY c.category_id, c.title
+ORDER BY user_count DESC;
+
+-- 12. Rank Films and Series by how recent they were published
+select
+    dense_rank() over (order by scheduled_publish_date desc) Rank,
+    content_id, title, description, scheduled_publish_date
+from Content
+where content_type != 'Episode' and scheduled_publish_date is not null
