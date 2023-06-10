@@ -1389,6 +1389,12 @@ select category_id, title,
        dense_rank() over (order by CategoryCount desc) Rank
 from OrderedCategories
 
+-- 5. Select the fundraisers that have raised the largest amount of money
+SELECT top 3 f.id, f.creator_id, f.goal_amount, f.collected, f.title, f.description, c.status, c.bio, c.website
+FROM Fundraising f
+INNER JOIN Creators c ON f.creator_id = c.account_id
+ORDER BY f.collected DESC
+
 -- 6. Rank content by how many people added it to watch list
 SELECT
     c.content_id,
@@ -1469,3 +1475,12 @@ select
     content_id, title, description, scheduled_publish_date
 from Content
 where content_type != 'Episode' and scheduled_publish_date is not null
+
+-- 13. Users who added more than 5 content to watch list
+SELECT A.*
+FROM Accounts A
+WHERE  (
+    SELECT COUNT(DISTINCT WL.content_id)
+    FROM WatchList WL
+    WHERE WL.account_id = A.account_id
+) >= 5;
