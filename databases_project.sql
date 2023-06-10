@@ -1,15 +1,3 @@
--- -- Disable foreign key constraints
--- EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
---
--- -- Drop tables
--- DECLARE @sql NVARCHAR(MAX) = '';
---
--- SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
--- FROM INFORMATION_SCHEMA.TABLES
--- WHERE TABLE_TYPE = 'BASE TABLE';
---
--- EXEC sp_executesql @sql;
-
 -- PaymentType table
 create table PaymentType (
 	id varchar(2) not null,
