@@ -1286,13 +1286,24 @@ values
 -- Reports
 
 -- 1. Select films, ranked by review ratings; and their creators
-
 select dense_rank() over (order by avg(RF.rating*1.0) desc) Rank,
     C.content_id, C.title as Title, C.description as Description, avg(RF.rating*1.0) as Average_Rating
 from Content C
 join Review RF on C.content_id = RF.content_id
 where content_type = 'Film'
-group by C.content_id, C.title, C.description
+group by C.content_id, C.title, C.description;
 
+-- 3. Select ranked most discussed content, based on the number of reviews
+with RankedByReviews as (
+    select C.content_id C_id, count(*) ReviewCount
+    from Content C
+    join Review R2 on C.content_id = R2.content_id
+    group by C.content_id
+)
+select
+    dense_rank() over (order by ReviewCount desc) Rank,
+    C_id, C.title, C.description, ReviewCount
+from RankedByReviews
+join Content C on C.content_id = C_id
 
--- 2.
+-- 4. 
