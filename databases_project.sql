@@ -1323,8 +1323,82 @@ select
 from RankedByReviews
 join Content C on C.content_id = C_id
 
--- 4. 10 most popular categories, based on the number of films and series in each category
-select * from Categories
-join ContentCategory CC on Categories.category_id = CC.category_id
-join Content C on CC.content_id = C.content_id
-where C.content_type = ''
+-- 4. Rank popular categories, based on the number of films and series in each category
+with OrderedCategories as (
+    select Categories.category_id, Categories.title, count(*) CategoryCount
+    from Categories
+    join ContentCategory CC on Categories.category_id = CC.category_id
+    join Content C on CC.content_id = C.content_id
+    where C.content_type != 'Episode'
+    group by Categories.category_id, Categories.title
+)
+select category_id, title,
+       dense_rank() over (order by CategoryCount desc) Rank
+from OrderedCategories
+
+-- 6. Rank content by how many people added it to watch list
+SELECT
+    c.content_id,
+    c.title,
+    COUNT(DISTINCT wl.account_id) AS watch_count
+FROM
+    Content c
+LEFT JOIN
+    WatchList wl ON c.content_id = wl.content_id
+GROUP BY
+    c.content_id,
+    c.title
+ORDER BY
+    watch_count DESC;
+
+-- 7. Rank users by amount of posts
+SELECT c.account_id, a.username, COUNT(p.id) AS post_count
+FROM Creators c
+JOIN Accounts a ON c.account_id = a.account_id
+LEFT JOIN Post p ON c.account_id = p.creator_id
+GROUP BY c.account_id, a.username
+ORDER BY post_count DESC;
+
+-- 8. Rank users by activity: how many reviews they left
+with CountUserReviews as (
+select A.username,
+       count(*) CountReviews
+from Review
+join Accounts A on Review.account_id = A.account_id
+group by A.username
+)
+select dense_rank() over (order by CountReviews desc),
+       username, CountReviews
+from CountUserReviews;
+
+-- 9. Rank series by how many episodes they have
+with CountedEpisodes as (
+select CS.content_id, CS.title, CS.description,
+       count(CE.content_id) CountEpisodes
+from Content CS
+join Content CE on CE.series_id = CS.content_id
+where CS.content_type = 'Series' and CE.content_type = 'Episode'
+group by CS.content_id, CS.title, CS.description
+)
+select
+    dense_rank() over (order by CountEpisodes desc),
+    content_id, title, description, CountEpisodes
+from CountedEpisodes
+
+-- 10. Select account that follows most creators
+SELECT TOP 1 account_id, username, MAX(total_follows) AS max_follows
+FROM (
+    SELECT f.user_id AS account_id, a.username, COUNT(f.creator_id) AS total_follows
+    FROM Follows f
+    JOIN Accounts a ON f.user_id = a.account_id
+    GROUP BY f.user_id, a.username
+
+    UNION ALL
+
+    SELECT cf.creator_follower AS account_id, a.username, COUNT(cf.creator_followed) AS total_follows
+    FROM CreatorFollows cf
+    JOIN Accounts a ON cf.creator_follower = a.account_id
+    GROUP BY cf.creator_follower, a.username
+) AS followers
+GROUP BY account_id, username
+ORDER BY max_follows DESC
