@@ -1,3 +1,10 @@
+-- EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+-- DECLARE @sql NVARCHAR(MAX) = '';
+-- SELECT @sql += 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + '];'
+-- FROM INFORMATION_SCHEMA.TABLES
+-- WHERE TABLE_TYPE = 'BASE TABLE';
+-- EXEC sp_executesql @sql;
+
 -- PaymentType table
 create table PaymentType (
 	id varchar(2) not null,
@@ -316,8 +323,6 @@ VALUES
     ('mia_thomas', 'mia.thomas@example.com', 'm2J7zK1rB6', 'Mia', 'Thomas', 'creator', 'https://example.com/profiles/mia_thomas.jpg'),
     ('jacob_adams', 'jacob.adams@example.com', 'j3K6fA9yX5', 'Jacob', 'Adams', 'creator', 'https://example.com/profiles/jacob_adams.jpg')
 
-select * from Accounts
-
 -- Insert into Creators
 insert into Creators (account_id, status, bio, website)
 values
@@ -337,8 +342,6 @@ values
     (31, 'CGI Artist', 'Creating visually striking 3D animations and digital environments for films.', 'https://www.example.com/creators/cgiartist1'),
     (32, 'Animator', 'Versatile animator skilled in both 2D and 3D animation with a strong focus on storytelling.', 'https://www.example.com/creators/animator5');
 
-select * from Creators
-
 -- Insert into Content: Series
 -- Insert Series
 insert into Content (content_type, title, description, thumbnail_url)
@@ -347,8 +350,6 @@ values ('Series', 'Mystery Tales', 'A series of thrilling mystery stories.', 'my
        ('Series', 'Adventure Island', 'An exciting adventure series set on a remote island.', 'adventure_island_thumbnail.jpg'),
        ('Series', 'Drama Diaries', 'A collection of dramatic stories that touch the heart.', 'drama_diaries_thumbnail.jpg'),
        ('Series', 'Comedy Corner', 'A series filled with hilarious comedic tales.', 'comedy_corner_thumbnail.jpg');
-
-select * from Content
 
 -- Insert into Seasons
 insert into Season (season_title, series_id, season_number)
@@ -364,10 +365,6 @@ values ('Mystery Tales Season 1', 8, 1),
        ('Comedy Corner Season 1', 12, 1),
        ('Comedy Corner Season 2', 12, 2),
        ('Comedy Corner Season 3', 12, 3);
-
-select * from Season
-
-select * from Content where content_type = 'Series'
 
 -- Insert into Content: Episodes - Mystery Tales Season 1
 insert into Content (content_type, title, description, content_url, series_id, season_number, episode_number, duration, thumbnail_url)
@@ -565,10 +562,6 @@ values
     (74, 14), -- The Long Goodbye belongs to 3D Animation category
     (75, 17) -- The Secret Agent belongs to Superhero category
 
-select * from Accounts where account_type = 'user'
-
-select * from Categories order by category_id
-
 -- Insert into UserInterests
 insert into UserInterests (account_id, category_id)
 values (3, 34), (3, 33), (3, 32),
@@ -704,8 +697,6 @@ values
     (32, 29),
     (32, 31);
 
-select * from Content
-select * from Accounts where account_type = 'user'
 -- Insert into WatchList
 insert into WatchList (account_id, content_id) values
     (3, 20),
@@ -795,12 +786,6 @@ insert into WatchList (account_id, content_id) values
     (17, 80);
 
 -- Insert Into ContentCollaborators
-select * from Content where content_type = 'Film'
-select * from Content where content_type = 'Series'
-select title from Content where content_type = 'Episode'
-select * from Creators
-select * from Season
-
 INSERT INTO ContentCollaborators (creator_id, content_id, role)
 VALUES
 -- Series type of content (content_id: 8 to 12)
@@ -1027,9 +1012,6 @@ VALUES
 (30, 62, 'Producer'),
 (31, 62, 'Cinematographer'),
 (32, 62, 'Production Designer');
-
-select * from Content where content_type = 'Episode'
-select * from Accounts where account_type = 'user'
 
 -- Series Reviews
 insert into Review (title, content, rating, content_id, account_id)
@@ -1362,7 +1344,7 @@ select
     dense_rank() over (order by ReviewCount desc) Rank,
     C_id, C.title, C.description, ReviewCount
 from RankedByReviews
-join Content C on C.content_id = C_id
+join Content C on C.content_id = C_id;
 
 -- 4. Rank popular categories, based on the number of films and series in each category
 with OrderedCategories as (

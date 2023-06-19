@@ -1,3 +1,5 @@
+
+
 -- Account table
 CREATE TABLE Account (
 	id integer identity(3, 1) not null,
